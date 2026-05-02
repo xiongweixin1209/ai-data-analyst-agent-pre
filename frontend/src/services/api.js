@@ -88,6 +88,27 @@ export const text2sqlAPI = {
     return response.data;
   },
 
+  planAnalysis: async (businessQuestion, datasourceId = null) => {
+    const body = { business_question: businessQuestion };
+    if (datasourceId) body.datasource_id = String(datasourceId);
+    const response = await apiClient.post('/text2sql/plan', body);
+    return response.data;
+  },
+
+  recommendChart: async (queryIntent, columns, sampleData) => {
+    const response = await apiClient.post('/text2sql/recommend-chart', {
+      query_intent: queryIntent,
+      columns,
+      sample_data: sampleData,
+    });
+    return response.data;
+  },
+
+  getCacheStats: async (limit = 20) => {
+    const response = await apiClient.get(`/text2sql/cache/stats?limit=${limit}`);
+    return response.data;
+  },
+
   health: async () => {
     const response = await apiClient.get('/text2sql/health');
     return response.data;

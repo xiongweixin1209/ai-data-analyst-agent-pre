@@ -5,6 +5,7 @@ Datasource Manager - 数据源管理服务
 """
 
 import sqlite3
+import time
 from typing import Dict, List, Optional
 from pathlib import Path
 
@@ -15,17 +16,18 @@ except ImportError:
     from sql_executor import SQLExecutor
 
 
-# app.db的路径
 _APP_DB_PATH = Path(__file__).parent.parent / "data" / "app.db"
+_SCHEMA_CACHE_TTL = 300  # schema 缓存有效期（秒）
 
 
 class DatasourceManager:
     """数据源管理器"""
 
     def __init__(self):
-        """初始化管理器"""
         self._executors: Dict[str, SQLExecutor] = {}
         self._datasources: Dict[str, Dict] = {}
+        self._schema_cache: Dict[str, Dict] = {}
+        self._schema_cache_ts: Dict[str, float] = {}
 
         # 启动时从数据库加载所有数据源
         self._load_all_from_db()
@@ -146,29 +148,25 @@ class DatasourceManager:
             return None
 
     def get_schema(self, datasource_id: str) -> Dict:
-        """获取数据源的Schema"""
+        """获取数据源的 Schema（带 TTL 内存缓存）"""
+        # 命中有效缓存直接返回
+        now = time.monotonic()
+        if datasource_id in self._schema_cache:
+            if now - self._schema_cache_ts.get(datasource_id, 0) < _SCHEMA_CACHE_TTL:
+                return self._schema_cache[datasource_id]
+
         executor = self.get_executor(datasource_id)
         if not executor:
-            return {
-                "success": False,
-                "tables": [],
-                "error": "无法连接到数据源"
-            }
+            return {"success": False, "tables": [], "error": "无法连接到数据源"}
 
         try:
             conn_test = executor.test_connection()
-
             if not conn_test["success"]:
-                return {
-                    "success": False,
-                    "tables": [],
-                    "error": conn_test["message"]
-                }
+                return {"success": False, "tables": [], "error": conn_test["message"]}
 
             tables = []
             for table_name in conn_test["tables"]:
                 table_info = executor.get_table_info(table_name)
-
                 if table_info["success"]:
                     tables.append({
                         "table_name": table_name,
@@ -176,18 +174,18 @@ class DatasourceManager:
                         "row_count": table_info["row_count"]
                     })
 
-            return {
-                "success": True,
-                "tables": tables,
-                "error": None
-            }
+            schema = {"success": True, "tables": tables, "error": None}
+            self._schema_cache[datasource_id] = schema
+            self._schema_cache_ts[datasource_id] = now
+            return schema
 
         except Exception as e:
-            return {
-                "success": False,
-                "tables": [],
-                "error": str(e)
-            }
+            return {"success": False, "tables": [], "error": str(e)}
+
+    def invalidate_schema_cache(self, datasource_id: str):
+        """主动失效某个数据源的 schema 缓存"""
+        self._schema_cache.pop(datasource_id, None)
+        self._schema_cache_ts.pop(datasource_id, None)
 
     def list_datasources(self) -> List[Dict]:
         """列出所有数据源"""
@@ -202,11 +200,11 @@ class DatasourceManager:
         return self._datasources.get(datasource_id)
 
     def remove_datasource(self, datasource_id: str) -> bool:
-        """移除数据源"""
+        """移除数据源并清除关联缓存"""
         if datasource_id in self._datasources:
-            if datasource_id in self._executors:
-                del self._executors[datasource_id]
+            self._executors.pop(datasource_id, None)
             del self._datasources[datasource_id]
+            self.invalidate_schema_cache(datasource_id)
             return True
         return False
 

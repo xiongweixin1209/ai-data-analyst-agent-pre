@@ -6,6 +6,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Database, FileText } from 'lucide-react';
+import { AppProvider } from './context/AppContext';
 import Text2SQLPage from './pages/Text2SQLPage';
 import DataSourceManagement from './pages/DataSourceManagement';
 
@@ -65,16 +66,15 @@ function Navigation() {
 function App() {
     return (
         <Router>
-            <div className="App min-h-screen bg-gray-50">
-                {/* 导航栏 */}
-                <Navigation />
-
-                {/* 页面内容 */}
-                <Routes>
-                    <Route path="/" element={<Text2SQLPage />} />
-                    <Route path="/datasource" element={<DataSourceManagement />} />
-                </Routes>
-            </div>
+            <AppProvider>
+                <div className="App min-h-screen bg-gray-50">
+                    <Navigation />
+                    <Routes>
+                        <Route path="/" element={<Text2SQLPage />} />
+                        <Route path="/datasource" element={<DataSourceManagement />} />
+                    </Routes>
+                </div>
+            </AppProvider>
         </Router>
     );
 }

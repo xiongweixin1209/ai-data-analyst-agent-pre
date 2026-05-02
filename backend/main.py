@@ -3,6 +3,14 @@ Text-to-SQL Backend API
 FastAPI应用入口 - CORS修复版 + Text2SQL完整集成
 """
 
+import sys
+import io
+
+# Windows GBK终端下强制UTF-8输出，防止emoji/中文字符报UnicodeEncodeError
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -114,7 +122,7 @@ async def add_cors_header(request: Request, call_next):
 def read_root():
     """根路径"""
     return {
-        "message": "Text-to-SQL API is running",
+        "message": "Text-to-SQL API 服务运行中",
         "status": "ok",
         "version": settings.APP_VERSION,
         "text2sql_enabled": text2sql_available

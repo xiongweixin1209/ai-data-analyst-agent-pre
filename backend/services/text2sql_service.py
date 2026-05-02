@@ -1,115 +1,186 @@
 """
 Text-to-SQL Service - 核心生成引擎
-整合：LLM服务 + Prompt模板 + 示例检索
+整合：LLM服务 + Prompt模板 + 示例检索 + Naive Bayes分类器 + 字段注释
 实现：三层查询策略（规则层 + Few-shot层 + Zero-shot层）
 """
 
-from typing import Dict, List, Optional
 import re
+import json
+from typing import Dict, List, Optional
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# 兼容两种运行方式的导入
 try:
-    # 作为模块运行时（python -m backend.services.text2sql_service）
     from .llm_service import get_llm_service
     from .prompts import PromptTemplates, CommonConstraints
     from .example_retriever import get_retriever
+    from .field_comment_service import get_comment_service
 except ImportError:
-    # 直接运行时（python text2sql_service.py）
     from llm_service import get_llm_service
     from prompts import PromptTemplates, CommonConstraints
     from example_retriever import get_retriever
+    from field_comment_service import get_comment_service
 
+
+# ------------------------------------------------------------------ #
+# Naive Bayes 分类器（在首次需要时懒加载训练）
+# ------------------------------------------------------------------ #
+
+class _QueryClassifier:
+    """
+    基于 TF-IDF + Complement Naive Bayes 的查询策略分类器。
+    训练数据来自 few_shot_examples.json，通过 category/difficulty 映射策略标签。
+    """
+
+    # category → strategy 映射表
+    _CATEGORY_TO_STRATEGY = {
+        "simple_select": "rule",
+        "simple_filter": "few_shot",
+        "aggregation": "few_shot",
+        "join_query": "few_shot",
+        "complex": "zero_shot",
+        "nested_query": "zero_shot",
+        "window_function": "zero_shot",
+        "ranking": "zero_shot",
+        "percentage": "zero_shot",
+    }
+
+    def __init__(self, examples_path: Path):
+        self._clf = None
+        self._vec = None
+        self._examples_path = examples_path
+        self._train()
+
+    def _map_label(self, example: Dict) -> str:
+        category = example.get("category", "")
+        difficulty = example.get("difficulty", "easy")
+        # 默认策略
+        strategy = self._CATEGORY_TO_STRATEGY.get(category, "few_shot")
+        # 难度为 hard 且尚未归为 zero_shot 的，提升到 zero_shot
+        if difficulty == "hard" and strategy == "few_shot":
+            strategy = "zero_shot"
+        # 极短的 simple_select 才用规则层
+        if strategy == "rule" and len(example.get("query", "")) > 12:
+            strategy = "few_shot"
+        return strategy
+
+    def _train(self):
+        try:
+            from sklearn.feature_extraction.text import TfidfVectorizer
+            from sklearn.naive_bayes import ComplementNB
+            import jieba
+
+            if not self._examples_path.exists():
+                return
+
+            with open(self._examples_path, "r", encoding="utf-8") as f:
+                examples = json.load(f)
+
+            texts, labels = [], []
+            for ex in examples:
+                query = ex.get("query", "")
+                keywords = " ".join(ex.get("keywords", []))
+                # 中文分词后拼接
+                tokens = " ".join(jieba.cut(query + " " + keywords))
+                texts.append(tokens)
+                labels.append(self._map_label(ex))
+
+            if len(set(labels)) < 2:
+                return  # 训练集类别不足，回退到规则分类
+
+            self._vec = TfidfVectorizer(analyzer="word", min_df=1)
+            X = self._vec.fit_transform(texts)
+            self._clf = ComplementNB()
+            self._clf.fit(X, labels)
+            print(f"✅ 查询分类器训练完成，样本数: {len(texts)}")
+        except Exception as e:
+            print(f"⚠️ 分类器训练失败，回退到规则分类: {e}")
+
+    def predict(self, query: str) -> str:
+        if self._clf is None or self._vec is None:
+            return self._rule_fallback(query)
+        try:
+            import jieba
+            tokens = " ".join(jieba.cut(query))
+            X = self._vec.transform([tokens])
+            return self._clf.predict(X)[0]
+        except Exception:
+            return self._rule_fallback(query)
+
+    @staticmethod
+    def _rule_fallback(query: str) -> str:
+        """分类器不可用时的兜底规则"""
+        q = query.lower()
+        complex_kws = ["排名", "top", "前", "最高", "最低", "占比", "百分比", "窗口", "rank"]
+        if any(kw in q for kw in complex_kws):
+            return "zero_shot"
+        agg_kws = ["统计", "计算", "总", "平均", "最大", "最小", "求和", "count", "sum", "avg"]
+        if any(kw in q for kw in agg_kws):
+            return "few_shot"
+        simple_kws = ["所有", "全部", "查询", "显示"]
+        if any(kw in q for kw in simple_kws) and len(query) < 15:
+            return "rule"
+        return "few_shot"
+
+
+# ------------------------------------------------------------------ #
+# 主服务
+# ------------------------------------------------------------------ #
 
 class Text2SQLService:
-    """Text-to-SQL核心服务"""
+    """Text-to-SQL 核心服务"""
 
     def __init__(self):
-        """初始化服务"""
         self.llm = get_llm_service()
         self.retriever = get_retriever()
         self.prompt_builder = PromptTemplates()
+        self.comment_service = get_comment_service()
+
+        # 懒加载分类器（需要 few_shot_examples.json 路径）
+        examples_path = (
+            Path(__file__).parent.parent.parent / "data" / "few_shot_examples.json"
+        )
+        self._classifier = _QueryClassifier(examples_path)
+
+    # ------------------------------------------------------------------ #
+    # 分类
+    # ------------------------------------------------------------------ #
 
     def _classify_query(self, query: str) -> Dict:
-        """
-        分类用户查询，决定使用哪种策略
+        strategy = self._classifier.predict(query)
+        complexity_map = {"rule": "simple", "few_shot": "medium", "zero_shot": "complex"}
+        return {
+            "strategy": strategy,
+            "category": "unknown",
+            "complexity": complexity_map.get(strategy, "medium")
+        }
 
-        Args:
-            query: 用户查询
+    # ------------------------------------------------------------------ #
+    # 字段注释（按需生成）
+    # ------------------------------------------------------------------ #
 
-        Returns:
-            Dict: {
-                "strategy": "rule" | "few_shot" | "zero_shot",
-                "category": str,  # 查询类别
-                "complexity": "simple" | "medium" | "complex"
-            }
-        """
-        query_lower = query.lower()
+    def _get_comments(self, datasource_id: Optional[str], schema: List[Dict]) -> Dict:
+        if not datasource_id:
+            return {}
+        try:
+            return self.comment_service.generate_for_schema(
+                datasource_id=datasource_id,
+                schema=schema,
+                llm_service=self.llm
+            )
+        except Exception as e:
+            print(f"⚠️ 获取字段注释失败: {e}")
+            return {}
 
-        # 简单规则判断
-        simple_keywords = ["所有", "全部", "查询", "显示"]
-        filter_keywords = ["大于", "小于", "等于", "包含", "是", "在"]
-        agg_keywords = ["统计", "计算", "总", "平均", "最大", "最小", "求和", "count", "sum", "avg"]
-        complex_keywords = ["排名", "top", "前", "最高", "最低", "占比", "百分比"]
+    # ------------------------------------------------------------------ #
+    # 三层生成策略
+    # ------------------------------------------------------------------ #
 
-        # 判断复杂度
-        if any(kw in query_lower for kw in complex_keywords):
-            return {
-                "strategy": "zero_shot",  # 复杂查询直接用Zero-shot
-                "category": "complex",
-                "complexity": "complex"
-            }
-        elif any(kw in query_lower for kw in agg_keywords):
-            return {
-                "strategy": "few_shot",  # 聚合查询用Few-shot
-                "category": "aggregation",
-                "complexity": "medium"
-            }
-        elif any(kw in query_lower for kw in filter_keywords):
-            return {
-                "strategy": "few_shot",  # 筛选查询用Few-shot
-                "category": "simple_filter",
-                "complexity": "simple"
-            }
-        elif any(kw in query_lower for kw in simple_keywords) and len(query) < 15:
-            return {
-                "strategy": "rule",  # 超简单查询用规则
-                "category": "simple_select",
-                "complexity": "simple"
-            }
-        else:
-            return {
-                "strategy": "few_shot",  # 默认用Few-shot
-                "category": "unknown",
-                "complexity": "medium"
-            }
-
-    def _generate_by_rule(
-            self,
-            query: str,
-            schema: List[Dict]
-    ) -> Dict:
-        """
-        规则层：处理超简单查询
-
-        Args:
-            query: 用户查询
-            schema: 数据库Schema
-
-        Returns:
-            Dict: 生成结果
-        """
-        # 对于"查询所有订单"这类超简单查询，直接返回
+    def _generate_by_rule(self, query: str, schema: List[Dict]) -> Dict:
         if not schema:
-            return {
-                "sql": "",
-                "success": False,
-                "error": "Schema为空",
-                "strategy": "rule"
-            }
+            return {"sql": "", "success": False, "error": "Schema 为空", "strategy": "rule"}
 
         table_name = schema[0].get("table_name", "orders")
-
-        # 简单的SELECT *
         if re.search(r'(所有|全部|查询)', query):
             sql = f"SELECT * FROM {table_name} LIMIT 100;"
             return {
@@ -118,357 +189,176 @@ class Text2SQLService:
                 "success": True,
                 "error": None,
                 "strategy": "rule",
-                "stats": {
-                    "prompt_tokens": 0,
-                    "completion_tokens": 0,
-                    "total_tokens": 0,
-                    "duration_ms": 0
-                }
+                "stats": {"prompt_tokens": 0, "completion_tokens": 0,
+                          "total_tokens": 0, "duration_ms": 0}
             }
-
-        # 降级到Few-shot
         return self._generate_by_few_shot(query, schema)
 
     def _generate_by_few_shot(
-            self,
-            query: str,
-            schema: List[Dict],
-            category: Optional[str] = None
+        self, query: str, schema: List[Dict],
+        category: Optional[str] = None,
+        comments: Optional[Dict] = None
     ) -> Dict:
-        """
-        Few-shot层：使用示例引导LLM
-
-        Args:
-            query: 用户查询
-            schema: 数据库Schema
-            category: 查询类别（可选）
-
-        Returns:
-            Dict: 生成结果
-        """
-        # 1. 检索相关示例
-        examples = self.retriever.retrieve(
-            query=query,
-            top_k=3,
-            category=category
-        )
-
+        examples = self.retriever.retrieve(query=query, top_k=3, category=category)
         if not examples:
-            # 如果没找到示例，降级到Zero-shot
-            print(f"警告：未找到相关示例，降级到Zero-shot")
-            return self._generate_by_zero_shot(query, schema)
+            print("警告：未找到相关示例，降级到 Zero-shot")
+            return self._generate_by_zero_shot(query, schema, comments=comments)
 
-        # 2. 格式化Schema
-        schema_text = self.prompt_builder.format_schema(schema)
-
-        # 3. 构建Few-shot Prompt
+        schema_text = self.prompt_builder.format_schema(schema, comments)
         prompt = self.prompt_builder.build_few_shot_prompt(
             user_query=query,
             schema=schema_text,
             examples=examples,
             constraints=CommonConstraints.SECURITY
         )
-
-        # 4. 调用LLM生成
-        result = self.llm.generate(
-            prompt=prompt,
-            temperature=0.1,  # 低温度，更确定性
-            max_tokens=500
-        )
-
-        # 5. 添加策略标识
+        result = self.llm.generate(prompt=prompt, temperature=0.1, max_tokens=500)
         result["strategy"] = "few_shot"
         result["examples_used"] = len(examples)
-
         return result
 
     def _generate_by_zero_shot(
-            self,
-            query: str,
-            schema: List[Dict]
+        self, query: str, schema: List[Dict],
+        comments: Optional[Dict] = None
     ) -> Dict:
-        """
-        Zero-shot层：无示例直接生成
-
-        Args:
-            query: 用户查询
-            schema: 数据库Schema
-
-        Returns:
-            Dict: 生成结果
-        """
-        # 1. 格式化Schema
-        schema_text = self.prompt_builder.format_schema(schema)
-
-        # 2. 构建Zero-shot Prompt
+        schema_text = self.prompt_builder.format_schema(schema, comments)
         prompt = self.prompt_builder.build_zero_shot_prompt(
             user_query=query,
             schema=schema_text,
             constraints=CommonConstraints.SECURITY
         )
-
-        # 3. 调用LLM生成
-        result = self.llm.generate(
-            prompt=prompt,
-            temperature=0.2,  # 稍高温度，增加创造性
-            max_tokens=800
-        )
-
-        # 4. 添加策略标识
+        result = self.llm.generate(prompt=prompt, temperature=0.2, max_tokens=800)
         result["strategy"] = "zero_shot"
         result["examples_used"] = 0
-
         return result
+
+    # ------------------------------------------------------------------ #
+    # 公共接口
+    # ------------------------------------------------------------------ #
 
     def generate_sql(
-            self,
-            query: str,
-            schema: List[Dict],
-            force_strategy: Optional[str] = None
+        self,
+        query: str,
+        schema: List[Dict],
+        force_strategy: Optional[str] = None,
+        datasource_id: Optional[str] = None
     ) -> Dict:
         """
-        生成SQL（主入口）
-
-        Args:
-            query: 用户的自然语言查询
-            schema: 数据库Schema
-                [
-                    {
-                        "table_name": "orders",
-                        "columns": [
-                            {"name": "order_id", "type": "INTEGER"},
-                            ...
-                        ]
-                    }
-                ]
-            force_strategy: 强制使用的策略（可选）
-                - "rule": 规则层
-                - "few_shot": Few-shot层
-                - "zero_shot": Zero-shot层
-
-        Returns:
-            Dict: {
-                "sql": str,              # 生成的SQL
-                "success": bool,          # 是否成功
-                "error": str,            # 错误信息（如果有）
-                "strategy": str,         # 使用的策略
-                "examples_used": int,    # 使用的示例数
-                "stats": {               # 统计信息
-                    "total_tokens": int,
-                    "duration_ms": float
-                }
-            }
+        生成 SQL（主入口）。
+        datasource_id: 可选，提供后自动获取字段注释并注入 Prompt。
         """
-        # 输入验证
         if not query or not query.strip():
-            return {
-                "sql": "",
-                "success": False,
-                "error": "查询不能为空",
-                "strategy": "none"
-            }
-
+            return {"sql": "", "success": False, "error": "查询不能为空", "strategy": "none"}
         if not schema:
-            return {
-                "sql": "",
-                "success": False,
-                "error": "Schema不能为空",
-                "strategy": "none"
-            }
+            return {"sql": "", "success": False, "error": "Schema 不能为空", "strategy": "none"}
 
-        # 决定使用哪种策略
-        if force_strategy:
-            strategy = force_strategy
-        else:
-            classification = self._classify_query(query)
-            strategy = classification["strategy"]
+        # 按需获取字段注释
+        comments = self._get_comments(datasource_id, schema)
 
-        # 根据策略生成SQL
+        strategy = force_strategy or self._classify_query(query)["strategy"]
+
         if strategy == "rule":
-            result = self._generate_by_rule(query, schema)
+            return self._generate_by_rule(query, schema)
         elif strategy == "few_shot":
-            result = self._generate_by_few_shot(query, schema)
+            return self._generate_by_few_shot(query, schema, comments=comments)
         elif strategy == "zero_shot":
-            result = self._generate_by_zero_shot(query, schema)
+            return self._generate_by_zero_shot(query, schema, comments=comments)
         else:
-            result = {
-                "sql": "",
-                "success": False,
-                "error": f"未知策略: {strategy}",
-                "strategy": "none"
-            }
-
-        return result
+            return {"sql": "", "success": False,
+                    "error": f"未知策略: {strategy}", "strategy": "none"}
 
     def batch_generate(
-            self,
-            queries: List[str],
-            schema: List[Dict]
+        self,
+        queries: List[str],
+        schema: List[Dict],
+        datasource_id: Optional[str] = None,
+        max_workers: int = 4
     ) -> List[Dict]:
-        """
-        批量生成SQL
+        """并发批量生成 SQL（ThreadPoolExecutor）"""
+        results = [None] * len(queries)
 
-        Args:
-            queries: 查询列表
-            schema: 数据库Schema
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_idx = {
+                executor.submit(self.generate_sql, q, schema, None, datasource_id): i
+                for i, q in enumerate(queries)
+            }
+            for future in as_completed(future_to_idx):
+                idx = future_to_idx[future]
+                try:
+                    results[idx] = future.result()
+                except Exception as e:
+                    results[idx] = {
+                        "sql": "", "success": False,
+                        "error": str(e), "strategy": "none"
+                    }
 
-        Returns:
-            List[Dict]: 生成结果列表
-        """
-        results = []
-        for query in queries:
-            result = self.generate_sql(query, schema)
-            results.append(result)
         return results
 
     def interpret_results(
-            self,
-            user_query: str,
-            columns: List[str],
-            data: List[Dict],
-            max_rows: int = 10
+        self,
+        user_query: str,
+        columns: List[str],
+        data: List[Dict],
+        max_rows: int = 10
     ) -> Dict:
-        """
-        对查询结果进行业务解读
-
-        Args:
-            user_query: 用户原始查询
-            columns: 列名列表
-            data: 查询结果数据
-            max_rows: 传给LLM的最大行数
-
-        Returns:
-            Dict: {"success": bool, "interpretation": str, "error": str}
-        """
+        """对查询结果进行业务解读"""
         try:
-            # 只取前N行避免token过多
             sample_data = data[:max_rows]
-
-            # 格式化数据为文本
             data_text = "，".join(columns) + "\n"
             for row in sample_data:
                 data_text += "，".join([str(row.get(col, "")) for col in columns]) + "\n"
-
             if len(data) > max_rows:
-                data_text += f"（仅展示前{max_rows}行，共{len(data)}行）\n"
+                data_text += f"（仅展示前 {max_rows} 行，共 {len(data)} 行）\n"
 
-            prompt = f"""你是一个数据分析助手。用户提出了一个数据查询，现在请你用1-3句简洁的中文，对查询结果进行业务层面的解读。
-    
-    用户的查询需求：{user_query}
-    
-    查询结果：
-    {data_text}
-    
-    要求：
-    1. 只输出解读文字，不要输出任何其他内容
-    2. 从业务角度解读数据，而不是描述数据格式
-    3. 如果数据有明显的规律或异常，请指出
-    4. 控制在3句话以内，简洁明了"""
+            prompt = f"""你是一个数据分析助手。用户提出了一个数据查询，请用1-3句简洁的中文，从业务角度解读查询结果。
 
-            result = self.llm.generate(
-                prompt=prompt,
-                temperature=0.3,
-                max_tokens=200
-            )
+用户的查询需求：{user_query}
 
+查询结果：
+{data_text}
+
+要求：
+1. 只输出解读文字，不要输出任何其他内容
+2. 从业务角度解读数据，而不是描述数据格式
+3. 如果数据有明显的规律或异常，请指出
+4. 控制在3句话以内，简洁明了"""
+
+            result = self.llm.generate(prompt=prompt, temperature=0.3, max_tokens=200)
             if result["success"]:
-                return {
-                    "success": True,
-                    "interpretation": result["sql"].strip(),
-                    "error": None
-                }
-            else:
-                return {
-                    "success": False,
-                    "interpretation": "",
-                    "error": result.get("error", "解读失败")
-                }
+                return {"success": True, "interpretation": result["sql"].strip(), "error": None}
+            return {"success": False, "interpretation": "", "error": result.get("error", "解读失败")}
 
         except Exception as e:
-            return {
-                "success": False,
-                "interpretation": "",
-                "error": str(e)
-            }
+            return {"success": False, "interpretation": "", "error": str(e)}
 
 
-# 全局服务实例
+# ------------------------------------------------------------------ #
+# 单例
+# ------------------------------------------------------------------ #
+
 _text2sql_service = None
 
 
 def get_text2sql_service() -> Text2SQLService:
-    """
-    获取Text-to-SQL服务单例
-
-    Returns:
-        Text2SQLService: 服务实例
-    """
     global _text2sql_service
     if _text2sql_service is None:
         _text2sql_service = Text2SQLService()
     return _text2sql_service
 
 
-# 测试函数
-def test_text2sql_service():
-    """测试Text-to-SQL服务"""
-    print("=" * 60)
-    print("测试Text-to-SQL服务")
-    print("=" * 60)
-
-    # 初始化服务
-    service = Text2SQLService()
-
-    # 模拟Schema
-    schema = [
-        {
-            "table_name": "orders",
-            "columns": [
-                {"name": "InvoiceNo", "type": "TEXT"},
-                {"name": "StockCode", "type": "TEXT"},
-                {"name": "Description", "type": "TEXT"},
-                {"name": "Quantity", "type": "INTEGER"},
-                {"name": "InvoiceDate", "type": "TEXT"},
-                {"name": "UnitPrice", "type": "REAL"},
-                {"name": "CustomerID", "type": "TEXT"},
-                {"name": "Country", "type": "TEXT"}
-            ]
-        }
-    ]
-
-    # 测试查询
-    test_queries = [
-        "查询所有订单",
-        "查询数量大于10的订单",
-        "统计每个国家的订单数量",
-        "查询销售额最高的前10个商品"
-    ]
-
-    print("\n开始生成SQL...")
-    print("-" * 60)
-
-    for i, query in enumerate(test_queries, 1):
-        print(f"\n【测试 {i}】")
-        print(f"查询: {query}")
-
-        result = service.generate_sql(query, schema)
-
-        if result["success"]:
-            print(f"✅ 生成成功")
-            print(f"策略: {result['strategy']}")
-            print(f"示例数: {result.get('examples_used', 0)}")
-            print(f"SQL: {result['sql']}")
-            print(f"Token: {result['stats'].get('total_tokens', 0)}")
-            print(f"耗时: {result['stats'].get('duration_ms', 0):.2f}ms")
-        else:
-            print(f"❌ 生成失败")
-            print(f"错误: {result['error']}")
-
-    print("\n" + "=" * 60)
-    print("测试完成！")
-    print("=" * 60)
-    print("\n💡 提示：首次调用LLM会较慢，后续会快很多")
-
-
 if __name__ == "__main__":
-    test_text2sql_service()
+    service = Text2SQLService()
+    schema = [{
+        "table_name": "orders",
+        "columns": [
+            {"name": "InvoiceNo", "type": "TEXT"},
+            {"name": "Quantity", "type": "INTEGER"},
+            {"name": "UnitPrice", "type": "REAL"},
+            {"name": "Country", "type": "TEXT"}
+        ]
+    }]
+    for q in ["查询所有订单", "统计每个国家的订单数量", "查询销售额最高的前10个商品"]:
+        r = service.generate_sql(q, schema)
+        status = "✅" if r["success"] else "❌"
+        print(f"{status} [{r['strategy']}] {q}")
+        if r["success"]:
+            print(f"   SQL: {r['sql']}")

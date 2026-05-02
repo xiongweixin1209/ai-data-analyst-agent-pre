@@ -3,49 +3,48 @@ Prompt Templates - Text-to-SQL提示词模板
 包含：Few-shot模板、Zero-shot模板、Schema格式化
 """
 
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 
 class PromptTemplates:
     """Prompt模板管理类"""
 
     @staticmethod
-    def format_schema(tables: List[Dict]) -> str:
+    def format_schema(tables: List[Dict], comments: Optional[Dict] = None) -> str:
         """
-        格式化数据库Schema信息
+        格式化数据库 Schema 信息，可附加 LLM 生成的字段业务注释。
 
         Args:
-            tables: 表结构列表
-                [
-                    {
-                        "table_name": "orders",
-                        "columns": [
-                            {"name": "order_id", "type": "INTEGER"},
-                            {"name": "amount", "type": "REAL"},
-                            ...
-                        ]
-                    },
-                    ...
-                ]
+            tables: 表结构列表，每项包含 table_name 和 columns
+            comments: 字段注释字典，格式为
+                {table_name: {"__table__": "表注释", col_name: "字段注释"}}
 
         Returns:
-            str: 格式化的Schema描述
+            str: 格式化的 Schema 描述
         """
+        comments = comments or {}
         schema_text = "数据库表结构：\n"
 
         for table in tables:
             table_name = table.get("table_name", "")
             columns = table.get("columns", [])
+            table_comments = comments.get(table_name, {})
 
-            # 表名
-            schema_text += f"\n表名：{table_name}\n"
+            table_comment = table_comments.get("__table__", "")
+            if table_comment:
+                schema_text += f"\n表名：{table_name}（{table_comment}）\n"
+            else:
+                schema_text += f"\n表名：{table_name}\n"
 
-            # 字段列表
             schema_text += "字段：\n"
             for col in columns:
                 col_name = col.get("name", "")
                 col_type = col.get("type", "")
-                schema_text += f"  - {col_name} ({col_type})\n"
+                col_comment = table_comments.get(col_name, "")
+                if col_comment:
+                    schema_text += f"  - {col_name} ({col_type})  # {col_comment}\n"
+                else:
+                    schema_text += f"  - {col_name} ({col_type})\n"
 
         return schema_text.strip()
 
