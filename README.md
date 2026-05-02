@@ -1,179 +1,117 @@
-# Text-to-SQL Assistant
+# Text-to-SQL 智能数据查询 Agent
 
-> 基于本地 LLM 的 AI 数据分析助手 · 自然语言查询 · 智能 SQL 生成 · 业务结果解读
+> 面向数据分析师的自然语言查询 Agent，通过中文提问自动生成并执行 SQL，整体执行成功率 82.5%，语法正确率 100%。
+
+## 🌐 作者主页
+
+**[xiongweixin1209.github.io](https://xiongweixin1209.github.io)**
 
 ---
 
 ## 项目简介
 
-Text-to-SQL Assistant 是一个面向复杂业务数据仓库环境的 AI 数据分析工具。用户只需用自然语言描述分析需求，系统即可自动理解语义、推荐相关数据表、生成并执行 SQL 查询，最终以可视化图表和 AI 业务解读的形式呈现结果。
+本项目是一个面向数据分析师的 **AI 驱动 SQL 查询工具**，核心产品问题是：降低 SQL 编写门槛的同时保障查询意图识别准确率。
 
-项目完整覆盖从"业务问题"到"数据洞察"的全链路，是面向 **AI Data Analyst Agent** 方向的工程实践。
-
----
-
-## 核心功能展示
-
-### 自然语言查询 · 图表可视化 · AI 业务解读
-
-用户输入"查询销售额最高的前13个商品"，系统自动生成 SQL、执行查询、渲染柱状图，并由 AI 给出业务层面的解读结论。
-
-> 📷 *[截图：查询结果 + 柱状图 + AI数据解读]*
-> ![查询结果+图表+AI解读](docs/images/01_query_result_with_chart.png)
-
----
-
-### 数据仓库结构感知 · DWD/DWS 分层识别
-
-系统自动分析数据库结构，识别 DWD 明细层与 DWS 汇总层，并按业务域（订单域、客户域、产品域等）归类展示，帮助用户快速理解数仓架构。
-
-> 📷 *[截图：数据库结构页面，展示分层与业务域]*
-> ![数据库结构分层](docs/images/02_database_structure.png)
-
----
-
-### AI 智能表推荐
-
-用户描述分析目标后，系统调用本地 LLM 智能推荐最相关的数据表，标注置信度与推荐理由，支持一键跳转至查询界面并自动勾选推荐表。
-
-> 📷 *[截图：AI智能表推荐结果]*
-> ![AI智能表推荐](docs/images/03_ai_table_recommendation.png)
-
----
-
-### SQL 优化建议 · 查询性能分析
-
-每次查询后自动提供 SQL 优化建议，并可执行 EXPLAIN 分析，展示查询计划、执行步骤、索引使用情况与性能等级评定。
-
-> 📷 *[截图：性能分析面板]*
-> ![性能分析面板](docs/images/04_performance_analysis.png)
+用户用中文描述查询需求，系统自动生成、验证并执行 SQL，返回结构化结果与可视化图表。
 
 ---
 
 ## 技术架构
 
-```
-┌─────────────────────────────────────────────────────┐
-│                    Frontend (React)                  │
-│                                                      │
-│  Text2SQLPage  ─── QueryInput / SQLDisplay           │
-│       │                                              │
-│       ├── ResultsTable (图表 + AI解读 + 分页)         │
-│       ├── OptimizationPanel (SQL优化建议)             │
-│       ├── PerformancePanel (EXPLAIN分析)              │
-│       └── DatabaseCognition (数仓结构 + 表推荐)       │
-└──────────────────────┬──────────────────────────────┘
-                       │ REST API
-┌──────────────────────▼──────────────────────────────┐
-│                   Backend (FastAPI)                  │
-│                                                      │
-│  API Layer:  text2sql_routes / datasource / schema   │
-│                                                      │
-│  Service Layer:                                      │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐  │
-│  │Text2SQLSvc  │  │ SchemaService│  │ LLMService │  │
-│  │(三层查询策略)│  │(分层检测/推荐)│  │(Ollama调用)│  │
-│  └─────────────┘  └──────────────┘  └────────────┘  │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐  │
-│  │ExampleRetrvr│  │ SQLExecutor  │  │SQLOptimizer│  │
-│  │(120条Few-shot│  │(多数据源执行)│  │(优化分析)  │  │
-│  └─────────────┘  └──────────────┘  └────────────┘  │
-└──────────────────────┬──────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────┐
-│                    Data Layer                        │
-│                                                      │
-│  Ollama (Qwen2.5-Coder 7B) · SQLite                  │
-│  Demo电商数据库 · Northwind数仓(ODS/DWD/DWS)          │
-└─────────────────────────────────────────────────────┘
-```
+- **后端**：FastAPI + SQLAlchemy，支持 SQLite / MySQL 多数据源
+- **前端**：React + Recharts，支持结果表格与自动图表切换
+- **LLM**：Ollama 本地部署（Qwen2.5-Coder 7B），完全离线运行
+- **分类器**：TF-IDF + Complement Naive Bayes，查询意图路由
 
 ---
 
-## 功能清单
+## 核心功能
 
-| 功能模块 | 说明 | 状态 |
+### 三层查询路由策略
+基于 Naive Bayes 分类器将查询路由至三个策略层：
+
+| 策略层 | 适用场景 | 说明 |
 |---|---|---|
-| 自然语言转SQL | 三层策略：Rule / Few-shot / Zero-shot，自动选择 | ✅ |
-| 120条Few-shot示例库 | 覆盖聚合、筛选、JOIN、窗口函数、RFM分析等场景 | ✅ |
-| AI智能表推荐 | LLM根据查询语义推荐最相关数据表，含置信度和理由 | ✅ |
-| 数仓分层识别 | 自动检测DWD/DWS层级，识别7个业务域 | ✅ |
-| SQL执行与结果展示 | 支持分页、排序、列筛选、导出CSV | ✅ |
-| 数据可视化 | 自动判断条件，渲染柱状图（Recharts） | ✅ |
-| AI业务解读 | LLM对查询结果进行业务层面的1-3句总结 | ✅ |
-| SQL优化建议 | 静态分析SQL，给出优化方向与严重程度 | ✅ |
-| 查询性能分析 | EXPLAIN执行计划，展示索引使用与执行步骤 | ✅ |
-| 多数据源管理 | 支持SQLite / MySQL / PostgreSQL，动态增删 | ✅ |
+| 规则层 | 简单全表查询 | 无需 LLM，直接生成模板 SQL |
+| Few-shot 层 | 过滤、聚合、JOIN | 检索最相关的 3 个示例注入 Prompt |
+| Zero-shot 层 | 复杂嵌套、窗口函数 | 仅提供 Schema，依赖模型推理 |
 
----
+### Few-shot 示例库
+- 120 条覆盖 8 类查询意图的标注示例
+- Jieba 倒排索引实现语义检索（keyword 权重 70%、query 文本 30%）
 
-## 技术栈
+### AI 效果评估框架（`eval/`）
+| 指标 | default 模式 | zero-shot-only | few-shot-top5 |
+|---|---|---|---|
+| LLM 调用成功率 | 100% | 100% | 100% |
+| SQL 语法正确率 | 100% | 100% | 100% |
+| 执行成功率（EX） | **82.5%** | 85.0% | 78.8% |
+| 策略分类准确率 | 56.2% | — | — |
+| 平均响应时间 | 3556ms | 3360ms | 3419ms |
 
-| 层级 | 技术 |
-|---|---|
-| 前端框架 | React 18 + Vite + Tailwind CSS |
-| 数据可视化 | Recharts |
-| 后端框架 | FastAPI + SQLAlchemy |
-| 本地 LLM | Ollama · Qwen2.5-Coder 7B |
-| 数据库 | SQLite（支持 MySQL / PostgreSQL 扩展） |
-| Few-shot 检索 | 关键词相似度匹配（自研，无需向量库） |
+评估测试集覆盖 8 类查询意图：单表查询、多表联结、聚合统计、时序查询、窗口函数、复杂嵌套、DWS 表查询、边界异常。
+
+**核心发现：** 错误归因分析定位主要瓶颈为 schema 列名幻觉（占失败用例 85.7%）；Few-shot top-5 较 top-3 EX 下降 3.7%，验证检索精准度优先于召回数量的产品设计原则。
+
+### 其他功能
+- SQL 优化器（静态规则引擎：SELECT *、缺失 LIMIT、隐式类型转换等）
+- EXPLAIN 性能分析与查询计划可视化
+- 数据仓库分层可视化（ODS / DWD / DWS）
+- 查询缓存（SHA-256 命中统计，持久化至 SQLite）
+- LLM 驱动的字段注释自动生成
 
 ---
 
 ## 快速启动
 
-### 环境准备
-
-- Python 3.10+
-- Node.js 18+
-- [Ollama](https://ollama.ai/) 已安装并运行
-
-### 拉取本地模型
-
 ```bash
-ollama pull qwen2.5-coder:7b
-```
-
-### 启动后端
-
-```bash
+# 后端
 cd backend
 pip install -r requirements.txt
-python main.py
-```
+uvicorn main:app --reload
 
-后端启动后访问 `http://localhost:8000/docs` 查看 API 文档。
-
-### 启动前端
-
-```bash
+# 前端
 cd frontend
 npm install
 npm run dev
 ```
 
-前端默认运行在 `http://localhost:5173`。
+需要本地运行 Ollama 并加载 `qwen2.5-coder:7b` 模型。
 
 ---
 
-## 项目规划（V2.0 方向）
+## 运行评估
 
-本项目当前为 V1.0，核心链路已完整可运行。面向 **AI Data Analyst Agent** 的下一阶段规划如下：
+```bash
+# 快速测试（10条）
+python eval/evaluator.py --limit 10 --mode default
 
-**接入飞书多维表格**
-将飞书多维表格作为数据源，通过飞书开放平台 API 实时读取表格数据，直接在飞书生态内完成数据分析闭环。
+# 全量三模式对比
+python eval/evaluator.py
 
-**升级云端模型，实现智能图表**
-接入火山方舟云端模型后，由 LLM 根据查询语义自动判断最适合的图表类型（柱状图 / 折线图 / 散点图），实现真正的智能可视化输出。
-
-**多轮对话式分析**
-支持基于上一次查询结果的追问与深入分析，例如"刚才的结果中，DOT 的月度趋势是什么？"，构建有记忆的分析会话。
-
-**主动数据洞察**
-Agent 在完成查询后，主动检测数据中的异常值、趋势拐点或业务风险，不等用户追问，直接输出洞察建议。
+# 查看评估报告
+cat eval/report.md
+```
 
 ---
 
-## 作者
+## 项目结构
 
-wxio827 · Master of Data Science, University of Auckland  
+```
+text-to-sql/
+├── backend/
+│   ├── api/              # FastAPI 路由
+│   └── services/         # 核心服务层
+│       ├── text2sql_service.py   # 三层路由 + 分类器
+│       ├── example_retriever.py  # Few-shot 检索
+│       ├── prompts.py            # Prompt 模板
+│       └── ...
+├── frontend/             # React 前端
+├── data/
+│   ├── northwind.db      # Northwind 数据仓库
+│   └── few_shot_examples.json  # 120 条标注示例
+└── eval/
+    ├── test_cases.json   # 80 条评估测试集
+    ├── evaluator.py      # 评估脚本
+    └── report.md         # 评估报告
+```
