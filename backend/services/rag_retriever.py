@@ -221,7 +221,10 @@ class EmbeddingRetriever:
 class HybridRetriever:
     """RRF 融合 EmbeddingRetriever + 现有 jieba ExampleRetriever。
 
-    任何一路挂掉都能降级到另一路单跑。
+    enable_embedding=False(默认)时只用 jieba,不初始化 embedding,
+    避免 8 分钟的首次预计算开销 + 每次查询 ~4s 的额外延迟。
+
+    任何一路挂掉都能降级到另一路单跑(只要 jieba 还在)。
     """
 
     def __init__(
@@ -229,20 +232,29 @@ class HybridRetriever:
         examples_path: Optional[Path] = None,
         embedding_model: str = DEFAULT_EMBEDDING_MODEL,
         ollama_base_url: str = "http://localhost:11434",
+        enable_embedding: bool = False,
     ):
-        # 两个底层检索器
+        # jieba 总是有
         self.jieba_retriever = ExampleRetriever(
             str(examples_path) if examples_path else None
         )
-        self.embedding_retriever = EmbeddingRetriever(
-            examples_path=examples_path,
-            model=embedding_model,
-            ollama_base_url=ollama_base_url,
-        )
+        # embedding 按 flag 决定
+        self.embedding_retriever: Optional[EmbeddingRetriever] = None
+        if enable_embedding:
+            self.embedding_retriever = EmbeddingRetriever(
+                examples_path=examples_path,
+                model=embedding_model,
+                ollama_base_url=ollama_base_url,
+            )
+        else:
+            print(
+                "ℹ️ HybridRetriever: embedding 路径未启用(jieba-only 模式)。"
+                "如需启用同义词检索,设置环境变量 ENABLE_RAG=true"
+            )
 
     @property
     def embedding_available(self) -> bool:
-        return self.embedding_retriever.available
+        return self.embedding_retriever is not None and self.embedding_retriever.available
 
     # 透传给 jieba 层(兼容原 ExampleRetriever API,/examples/stats 等端点会用)
     def get_statistics(self) -> dict:
@@ -331,9 +343,19 @@ _hybrid_retriever: Optional[HybridRetriever] = None
 
 
 def get_hybrid_retriever() -> HybridRetriever:
+    """工厂函数,按 settings.ENABLE_RAG 决定是否启用 embedding 路径。"""
     global _hybrid_retriever
     if _hybrid_retriever is None:
-        _hybrid_retriever = HybridRetriever()
+        # 读 settings.ENABLE_RAG。如果 config 不可用(脚本独立运行场景),
+        # 退化到读环境变量 ENABLE_RAG。
+        enable_embedding = False
+        try:
+            from config import settings
+            enable_embedding = bool(getattr(settings, "ENABLE_RAG", False))
+        except Exception:
+            import os
+            enable_embedding = os.getenv("ENABLE_RAG", "").lower() in ("1", "true", "yes")
+        _hybrid_retriever = HybridRetriever(enable_embedding=enable_embedding)
     return _hybrid_retriever
 
 

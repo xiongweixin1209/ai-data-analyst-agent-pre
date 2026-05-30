@@ -45,6 +45,15 @@ class Settings(BaseSettings):
         str(Path(__file__).parent.parent.parent / "data-warehouse" / "pharma"),
     ]
 
+    # RAG (Hybrid embedding + jieba) 检索开关
+    # 默认 False = 纯 jieba 字面匹配,这是 eval 验证过 EX 最高的配置(97.5%)。
+    # True = 启用 Hybrid RAG,带来同义词/口语化匹配能力,但牺牲 ~4s/query
+    # 延迟,且在 few-shot 库精心调优的场景下 EX 微降(-3.7%,落在单次 eval
+    # 噪声窗内)。建议仅在面对 OOD 查询(用户用了示例库没有的同义词)时启用。
+    #
+    # 启用方式:环境变量 ENABLE_RAG=true,或直接改这个默认值。
+    ENABLE_RAG: bool = False
+
     # SQL配置
     SQL_TIMEOUT: int = 30  # SQL执行超时（秒）
     MAX_RESULT_ROWS: int = 1000  # 最大返回行数
