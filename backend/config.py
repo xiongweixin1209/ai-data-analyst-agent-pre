@@ -48,6 +48,9 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+        # 容忍 .env 里出现 Settings 没声明的字段(如历史遗留的 DATABASE_URL),
+        # 否则 pydantic-settings v2 会因 "Extra inputs are not permitted" 启动失败
+        extra = "ignore"
 
 # 创建全局配置实例
 settings = Settings()
