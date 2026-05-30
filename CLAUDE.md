@@ -129,11 +129,28 @@ API 调用统一走 `frontend/src/services/api.js`(axios,base URL `http://localh
 
 ## Demo Databases
 
-**注意:`.db` 文件不在 git 中**(看 `.gitignore`),仅在本地工作目录存在。首次 clone 后需运行 `python backend/create_demo_db.py` 或自行准备:
+**注意:`.db` 文件不在 git 中**(看 `.gitignore`),仅在本地工作目录存在。首次 clone 后需运行 `python backend/create_demo_db.py` 或自行准备。
+
+**目录职责**:
+- `data/` — 所有业务/示例数据库 + few-shot 资料(可被自动扫描注册)
+- `backend/data/` — 仅放应用元数据(`app.db`)
 
 | File | Contents |
 |---|---|
 | `data/demo_ecommerce.db` | E-commerce orders,默认 demo 目标(`settings.DEMO_DB_PATH`) |
 | `data/northwind.db` | Northwind 数仓 — 16 张表,DWD/DWS 分层,7 个业务域,**eval 用的就是这个** |
+| `data/Chinook_Sqlite_*.sqlite` | 音乐商店示例 db |
+| `data/few_shot_examples.json` | 120 条 few-shot 示例 |
 | `backend/data/app.db` | 应用元数据库:datasources / query_cache / field_comments |
-| `backend/data/Chinook_Sqlite_*.sqlite` | 音乐商店示例 db |
+
+### 数据源自动注册机制
+
+`datasource_manager.py` 启动时做三件事(在 `__init__` 里依次跑):
+
+1. **从 app.db 加载**(`_load_all_from_db`)— 把 `datasources` 表里已有记录加载到内存
+2. **扫盘自动注册**(`_auto_register_from_disk`)— 扫描 `data/` 与 `settings.EXTERNAL_DATA_DIRS` 配置的每个目录,把发现的 `*.db / *.sqlite / *.sqlite3` 文件且未注册的自动 INSERT 进 datasources 表
+3. **幽灵记录检测**(`_check_ghost_records`)— 检查所有 `file_path` 字段指向的文件是否存在,不存在的打印警告但**不删除**(温和策略,允许用户手动恢复或清理)
+
+去重依据:`file_path` 解析为绝对路径后作为唯一键。已注册的文件不会被重复 INSERT,启动是幂等的。
+
+为 Plan C 等外部数据仓库对接预留的扩展点是 `settings.EXTERNAL_DATA_DIRS`,在 `config.py` 或 `.env` 里配置一个绝对路径列表,启动时会一起扫描。
