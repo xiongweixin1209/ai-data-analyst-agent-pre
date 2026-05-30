@@ -9,9 +9,12 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:8000/api';
 
 // 创建axios实例
+// timeout: 120s — 本地 Ollama 7B 模型生成长 JSON(/plan 等端点最多 1000 tokens)
+// 在冷启动或负载高时可能要 30-60s,30s 全局超时会让前端先报错,导致后端
+// 实际返回 200 但用户看到 "timeout" 的体验割裂。120s 给 LLM 充足时间。
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
+  timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
   },
