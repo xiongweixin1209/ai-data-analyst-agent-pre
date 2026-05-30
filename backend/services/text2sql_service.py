@@ -13,12 +13,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 try:
     from .llm_service import get_llm_service
     from .prompts import PromptTemplates, CommonConstraints
-    from .example_retriever import get_retriever
+    from .rag_retriever import get_hybrid_retriever
     from .field_comment_service import get_comment_service
 except ImportError:
     from llm_service import get_llm_service
     from prompts import PromptTemplates, CommonConstraints
-    from example_retriever import get_retriever
+    from rag_retriever import get_hybrid_retriever
     from field_comment_service import get_comment_service
 
 
@@ -132,7 +132,10 @@ class Text2SQLService:
 
     def __init__(self):
         self.llm = get_llm_service()
-        self.retriever = get_retriever()
+        # RAG 升级:用 HybridRetriever(embedding + jieba 双路 RRF 融合)
+        # 替换原来的纯 jieba ExampleRetriever。Hybrid API 完全兼容,
+        # 已透传 retrieve / get_statistics / get_categories 等方法
+        self.retriever = get_hybrid_retriever()
         self.prompt_builder = PromptTemplates()
         self.comment_service = get_comment_service()
 

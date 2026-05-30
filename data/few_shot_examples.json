@@ -3,528 +3,902 @@
     "id": 1,
     "category": "simple_filter",
     "query": "查询2010年12月的所有订单",
-    "sql": "SELECT * FROM orders WHERE STRFTIME('%Y-%m', invoice_date) = '2010-12';",
-    "keywords": ["时间", "月份", "2010", "12月", "订单"]
+    "sql": "SELECT * FROM Orders WHERE STRFTIME('%Y-%m', OrderDate) = '2010-12';",
+    "keywords": [
+      "时间",
+      "月份",
+      "2010",
+      "12月",
+      "订单"
+    ]
   },
   {
     "id": 2,
     "category": "simple_filter",
     "query": "查询来自英国的订单",
-    "sql": "SELECT * FROM orders WHERE country = 'United Kingdom';",
-    "keywords": ["国家", "地区", "英国", "筛选"]
+    "sql": "SELECT * FROM Orders WHERE ShipCountry = 'United Kingdom';",
+    "keywords": [
+      "国家",
+      "地区",
+      "英国",
+      "筛选"
+    ]
   },
   {
     "id": 3,
     "category": "simple_filter",
     "query": "查询单价大于10的商品",
-    "sql": "SELECT * FROM order_items WHERE unit_price > 10;",
-    "keywords": ["单价", "价格", "大于", "筛选"]
+    "sql": "SELECT * FROM \"Order Details\" WHERE UnitPrice > 10;",
+    "keywords": [
+      "单价",
+      "价格",
+      "大于",
+      "筛选"
+    ]
   },
   {
     "id": 4,
     "category": "simple_filter",
     "query": "查询订单号为536365的订单详情",
-    "sql": "SELECT * FROM orders WHERE invoice_no = '536365';",
-    "keywords": ["订单号", "详情", "筛选"]
+    "sql": "SELECT * FROM Orders WHERE OrderID = '536365';",
+    "keywords": [
+      "订单号",
+      "详情",
+      "筛选"
+    ]
   },
   {
     "id": 5,
     "category": "simple_filter",
     "query": "查询商品代码为85123A的商品信息",
-    "sql": "SELECT * FROM products WHERE stock_code = '85123A';",
-    "keywords": ["商品代码", "商品", "筛选"]
+    "sql": "SELECT * FROM Products WHERE ProductID = '85123A';",
+    "keywords": [
+      "商品代码",
+      "商品",
+      "筛选"
+    ]
   },
   {
     "id": 6,
     "category": "simple_filter",
     "query": "查询购买数量大于10的订单明细",
-    "sql": "SELECT * FROM order_items WHERE quantity > 10;",
-    "keywords": ["数量", "大于", "购买", "筛选"]
+    "sql": "SELECT * FROM \"Order Details\" WHERE Quantity > 10;",
+    "keywords": [
+      "数量",
+      "大于",
+      "购买",
+      "筛选"
+    ]
   },
   {
     "id": 7,
     "category": "simple_filter",
     "query": "查询单价在2到5之间的商品",
-    "sql": "SELECT * FROM order_items WHERE unit_price BETWEEN 2 AND 5;",
-    "keywords": ["单价", "范围", "之间", "筛选"]
+    "sql": "SELECT * FROM \"Order Details\" WHERE UnitPrice BETWEEN 2 AND 5;",
+    "keywords": [
+      "单价",
+      "范围",
+      "之间",
+      "筛选"
+    ]
   },
   {
     "id": 8,
     "category": "simple_filter",
     "query": "查询商品描述包含HEART的商品",
-    "sql": "SELECT * FROM products WHERE description LIKE '%HEART%';",
-    "keywords": ["描述", "包含", "模糊", "筛选"]
+    "sql": "SELECT * FROM Products WHERE ProductName LIKE '%HEART%';",
+    "keywords": [
+      "描述",
+      "包含",
+      "模糊",
+      "筛选"
+    ]
   },
   {
     "id": 9,
     "category": "simple_filter",
     "query": "查询来自法国、德国、西班牙的订单",
-    "sql": "SELECT * FROM orders WHERE country IN ('France', 'Germany', 'Spain');",
-    "keywords": ["多个", "国家", "筛选"]
+    "sql": "SELECT * FROM Orders WHERE ShipCountry IN ('France', 'Germany', 'Spain');",
+    "keywords": [
+      "多个",
+      "国家",
+      "筛选"
+    ]
   },
   {
     "id": 10,
     "category": "simple_filter",
     "query": "查询客户ID为17850的所有订单",
-    "sql": "SELECT * FROM orders WHERE customer_id = '17850';",
-    "keywords": ["客户", "筛选", "订单"]
+    "sql": "SELECT * FROM Orders WHERE CustomerID = '17850';",
+    "keywords": [
+      "客户",
+      "筛选",
+      "订单"
+    ]
   },
   {
     "id": 11,
     "category": "simple_filter",
     "query": "查询购买数量为6的订单明细",
-    "sql": "SELECT * FROM order_items WHERE quantity = 6;",
-    "keywords": ["数量", "等于", "筛选"]
+    "sql": "SELECT * FROM \"Order Details\" WHERE Quantity = 6;",
+    "keywords": [
+      "数量",
+      "等于",
+      "筛选"
+    ]
   },
   {
     "id": 12,
     "category": "simple_filter",
     "query": "查询商品描述包含BOX的所有商品",
-    "sql": "SELECT * FROM products WHERE description LIKE '%BOX%';",
-    "keywords": ["描述", "包含", "筛选"]
+    "sql": "SELECT * FROM Products WHERE ProductName LIKE '%BOX%';",
+    "keywords": [
+      "描述",
+      "包含",
+      "筛选"
+    ]
   },
   {
     "id": 13,
     "category": "simple_filter",
     "query": "查询单价小于1的商品明细",
-    "sql": "SELECT * FROM order_items WHERE unit_price < 1;",
-    "keywords": ["单价", "小于", "筛选"]
+    "sql": "SELECT * FROM \"Order Details\" WHERE UnitPrice < 1;",
+    "keywords": [
+      "单价",
+      "小于",
+      "筛选"
+    ]
   },
   {
     "id": 14,
     "category": "simple_filter",
     "query": "查询2010年的所有订单",
-    "sql": "SELECT * FROM orders WHERE STRFTIME('%Y', invoice_date) = '2010';",
-    "keywords": ["年份", "2010", "时间", "筛选"]
+    "sql": "SELECT * FROM Orders WHERE STRFTIME('%Y', OrderDate) = '2010';",
+    "keywords": [
+      "年份",
+      "2010",
+      "时间",
+      "筛选"
+    ]
   },
   {
     "id": 15,
     "category": "simple_filter",
     "query": "查询商品描述以WHITE开头的商品",
-    "sql": "SELECT * FROM products WHERE description LIKE 'WHITE%';",
-    "keywords": ["描述", "开头", "筛选"]
+    "sql": "SELECT * FROM Products WHERE ProductName LIKE 'WHITE%';",
+    "keywords": [
+      "描述",
+      "开头",
+      "筛选"
+    ]
   },
   {
     "id": 16,
     "category": "aggregation",
     "query": "统计每个国家的订单数量",
-    "sql": "SELECT country, COUNT(*) as order_count FROM orders GROUP BY country;",
-    "keywords": ["统计", "数量", "国家", "分组"]
+    "sql": "SELECT ShipCountry, COUNT(*) as order_count FROM Orders GROUP BY ShipCountry;",
+    "keywords": [
+      "统计",
+      "数量",
+      "国家",
+      "分组"
+    ]
   },
   {
     "id": 17,
     "category": "aggregation",
     "query": "计算所有订单的总销售额",
-    "sql": "SELECT SUM(quantity * unit_price) as total_amount FROM order_items;",
-    "keywords": ["总和", "销售额", "求和"]
+    "sql": "SELECT SUM(Quantity * UnitPrice) as total_amount FROM \"Order Details\";",
+    "keywords": [
+      "总和",
+      "销售额",
+      "求和"
+    ]
   },
   {
     "id": 18,
     "category": "aggregation",
     "query": "计算每个商品的平均单价",
-    "sql": "SELECT stock_code, AVG(unit_price) as avg_price FROM order_items GROUP BY stock_code;",
-    "keywords": ["平均", "单价", "分组"]
+    "sql": "SELECT ProductID, AVG(UnitPrice) as avg_price FROM \"Order Details\" GROUP BY ProductID;",
+    "keywords": [
+      "平均",
+      "单价",
+      "分组"
+    ]
   },
   {
     "id": 19,
     "category": "aggregation",
     "query": "统计每个月的订单数量",
-    "sql": "SELECT STRFTIME('%Y-%m', invoice_date) as month, COUNT(*) as order_count FROM orders GROUP BY month;",
-    "keywords": ["统计", "月份", "数量", "分组"]
+    "sql": "SELECT STRFTIME('%Y-%m', OrderDate) as month, COUNT(*) as order_count FROM Orders GROUP BY month;",
+    "keywords": [
+      "统计",
+      "月份",
+      "数量",
+      "分组"
+    ]
   },
   {
     "id": 20,
     "category": "aggregation",
     "query": "计算每个客户的订单总金额",
-    "sql": "SELECT o.customer_id, SUM(oi.quantity * oi.unit_price) as total_amount FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id;",
-    "keywords": ["客户", "总金额", "求和", "分组"]
+    "sql": "SELECT o.CustomerID, SUM(oi.Quantity * oi.UnitPrice) as total_amount FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID;",
+    "keywords": [
+      "客户",
+      "总金额",
+      "求和",
+      "分组"
+    ]
   },
   {
     "id": 21,
     "category": "aggregation",
     "query": "统计每个国家的客户数量",
-    "sql": "SELECT country, COUNT(DISTINCT customer_id) as customer_count FROM orders GROUP BY country;",
-    "keywords": ["统计", "客户", "国家", "去重"]
+    "sql": "SELECT ShipCountry, COUNT(DISTINCT CustomerID) as customer_count FROM Orders GROUP BY ShipCountry;",
+    "keywords": [
+      "统计",
+      "客户",
+      "国家",
+      "去重"
+    ]
   },
   {
     "id": 22,
     "category": "aggregation",
     "query": "计算每个订单的总金额",
-    "sql": "SELECT invoice_no, SUM(quantity * unit_price) as total_amount FROM order_items GROUP BY invoice_no;",
-    "keywords": ["订单", "总金额", "求和", "分组"]
+    "sql": "SELECT OrderID, SUM(Quantity * UnitPrice) as total_amount FROM \"Order Details\" GROUP BY OrderID;",
+    "keywords": [
+      "订单",
+      "总金额",
+      "求和",
+      "分组"
+    ]
   },
   {
     "id": 23,
     "category": "aggregation",
     "query": "统计每个商品的销售数量",
-    "sql": "SELECT stock_code, SUM(quantity) as total_quantity FROM order_items GROUP BY stock_code;",
-    "keywords": ["商品", "销售", "数量", "求和"]
+    "sql": "SELECT ProductID, SUM(Quantity) as total_quantity FROM \"Order Details\" GROUP BY ProductID;",
+    "keywords": [
+      "商品",
+      "销售",
+      "数量",
+      "求和"
+    ]
   },
   {
     "id": 24,
     "category": "aggregation",
     "query": "计算单价的最大值和最小值",
-    "sql": "SELECT MAX(unit_price) as max_price, MIN(unit_price) as min_price FROM order_items;",
-    "keywords": ["最大", "最小", "单价"]
+    "sql": "SELECT MAX(UnitPrice) as max_price, MIN(UnitPrice) as min_price FROM \"Order Details\";",
+    "keywords": [
+      "最大",
+      "最小",
+      "单价"
+    ]
   },
   {
     "id": 25,
     "category": "aggregation",
     "query": "统计总客户数",
-    "sql": "SELECT COUNT(DISTINCT customer_id) as total_customers FROM orders;",
-    "keywords": ["统计", "客户", "总数", "去重"]
+    "sql": "SELECT COUNT(DISTINCT CustomerID) as total_customers FROM Orders;",
+    "keywords": [
+      "统计",
+      "客户",
+      "总数",
+      "去重"
+    ]
   },
   {
     "id": 26,
     "category": "aggregation",
     "query": "统计总订单数",
-    "sql": "SELECT COUNT(*) as total_orders FROM orders;",
-    "keywords": ["统计", "订单", "总数"]
+    "sql": "SELECT COUNT(*) as total_orders FROM Orders;",
+    "keywords": [
+      "统计",
+      "订单",
+      "总数"
+    ]
   },
   {
     "id": 27,
     "category": "aggregation",
     "query": "计算每个国家的平均订单金额",
-    "sql": "SELECT o.country, AVG(oi.quantity * oi.unit_price) as avg_amount FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.country;",
-    "keywords": ["国家", "平均", "订单金额"]
+    "sql": "SELECT o.ShipCountry, AVG(oi.Quantity * oi.UnitPrice) as avg_amount FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.ShipCountry;",
+    "keywords": [
+      "国家",
+      "平均",
+      "订单金额"
+    ]
   },
   {
     "id": 28,
     "category": "aggregation",
     "query": "统计每个商品的订单数量",
-    "sql": "SELECT stock_code, COUNT(DISTINCT invoice_no) as order_count FROM order_items GROUP BY stock_code;",
-    "keywords": ["商品", "订单", "数量", "统计"]
+    "sql": "SELECT ProductID, COUNT(DISTINCT OrderID) as order_count FROM \"Order Details\" GROUP BY ProductID;",
+    "keywords": [
+      "商品",
+      "订单",
+      "数量",
+      "统计"
+    ]
   },
   {
     "id": 29,
     "category": "aggregation",
     "query": "计算购买数量的平均值",
-    "sql": "SELECT AVG(quantity) as avg_quantity FROM order_items;",
-    "keywords": ["平均", "数量", "购买"]
+    "sql": "SELECT AVG(Quantity) as avg_quantity FROM \"Order Details\";",
+    "keywords": [
+      "平均",
+      "数量",
+      "购买"
+    ]
   },
   {
     "id": 30,
     "category": "aggregation",
     "query": "统计不同商品的总数",
-    "sql": "SELECT COUNT(DISTINCT stock_code) as product_count FROM products;",
-    "keywords": ["统计", "商品", "总数", "去重"]
+    "sql": "SELECT COUNT(DISTINCT ProductID) as product_count FROM Products;",
+    "keywords": [
+      "统计",
+      "商品",
+      "总数",
+      "去重"
+    ]
   },
   {
     "id": 31,
     "category": "top_n",
     "query": "查询销售额最高的10个商品",
-    "sql": "SELECT stock_code, SUM(quantity * unit_price) as total FROM order_items GROUP BY stock_code ORDER BY total DESC LIMIT 10;",
-    "keywords": ["销售额", "最高", "排序", "TOP", "前10"]
+    "sql": "SELECT ProductID, SUM(Quantity * UnitPrice) as total FROM \"Order Details\" GROUP BY ProductID ORDER BY total DESC LIMIT 10;",
+    "keywords": [
+      "销售额",
+      "最高",
+      "排序",
+      "TOP",
+      "前10"
+    ]
   },
   {
     "id": 32,
     "category": "top_n",
     "query": "查询单价最高的5个商品",
-    "sql": "SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 5;",
-    "keywords": ["单价", "最高", "排序", "TOP", "前5"]
+    "sql": "SELECT * FROM \"Order Details\" ORDER BY UnitPrice DESC LIMIT 5;",
+    "keywords": [
+      "单价",
+      "最高",
+      "排序",
+      "TOP",
+      "前5"
+    ]
   },
   {
     "id": 33,
     "category": "top_n",
     "query": "查询购买数量最多的10个订单",
-    "sql": "SELECT invoice_no, SUM(quantity) as total_quantity FROM order_items GROUP BY invoice_no ORDER BY total_quantity DESC LIMIT 10;",
-    "keywords": ["数量", "最多", "排序", "TOP", "前10"]
+    "sql": "SELECT OrderID, SUM(Quantity) as total_quantity FROM \"Order Details\" GROUP BY OrderID ORDER BY total_quantity DESC LIMIT 10;",
+    "keywords": [
+      "数量",
+      "最多",
+      "排序",
+      "TOP",
+      "前10"
+    ]
   },
   {
     "id": 34,
     "category": "top_n",
     "query": "查询订单数量最多的5个国家",
-    "sql": "SELECT country, COUNT(*) as order_count FROM orders GROUP BY country ORDER BY order_count DESC LIMIT 5;",
-    "keywords": ["订单数", "最多", "国家", "TOP", "前5"]
+    "sql": "SELECT ShipCountry, COUNT(*) as order_count FROM Orders GROUP BY ShipCountry ORDER BY order_count DESC LIMIT 5;",
+    "keywords": [
+      "订单数",
+      "最多",
+      "国家",
+      "TOP",
+      "前5"
+    ]
   },
   {
     "id": 35,
     "category": "top_n",
     "query": "查询消费金额最高的10个客户",
-    "sql": "SELECT o.customer_id, SUM(oi.quantity * oi.unit_price) as total_spent FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id ORDER BY total_spent DESC LIMIT 10;",
-    "keywords": ["客户", "消费", "金额", "最高", "TOP"]
+    "sql": "SELECT o.CustomerID, SUM(oi.Quantity * oi.UnitPrice) as total_spent FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID ORDER BY total_spent DESC LIMIT 10;",
+    "keywords": [
+      "客户",
+      "消费",
+      "金额",
+      "最高",
+      "TOP"
+    ]
   },
   {
     "id": 36,
     "category": "top_n",
     "query": "查询销售数量最少的10个商品",
-    "sql": "SELECT stock_code, SUM(quantity) as total_quantity FROM order_items GROUP BY stock_code ORDER BY total_quantity ASC LIMIT 10;",
-    "keywords": ["销售", "数量", "最少", "排序", "TOP"]
+    "sql": "SELECT ProductID, SUM(Quantity) as total_quantity FROM \"Order Details\" GROUP BY ProductID ORDER BY total_quantity ASC LIMIT 10;",
+    "keywords": [
+      "销售",
+      "数量",
+      "最少",
+      "排序",
+      "TOP"
+    ]
   },
   {
     "id": 37,
     "category": "top_n",
     "query": "查询平均订单金额最高的5个国家",
-    "sql": "SELECT o.country, AVG(oi.quantity * oi.unit_price) as avg_amount FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.country ORDER BY avg_amount DESC LIMIT 5;",
-    "keywords": ["平均", "订单金额", "最高", "国家", "TOP"]
+    "sql": "SELECT o.ShipCountry, AVG(oi.Quantity * oi.UnitPrice) as avg_amount FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.ShipCountry ORDER BY avg_amount DESC LIMIT 5;",
+    "keywords": [
+      "平均",
+      "订单金额",
+      "最高",
+      "国家",
+      "TOP"
+    ]
   },
   {
     "id": 38,
     "category": "top_n",
     "query": "查询最早的5个订单",
-    "sql": "SELECT * FROM orders ORDER BY invoice_date ASC LIMIT 5;",
-    "keywords": ["最早", "时间", "排序", "订单"]
+    "sql": "SELECT * FROM Orders ORDER BY OrderDate ASC LIMIT 5;",
+    "keywords": [
+      "最早",
+      "时间",
+      "排序",
+      "订单"
+    ]
   },
   {
     "id": 39,
     "category": "top_n",
     "query": "查询最近的5个订单",
-    "sql": "SELECT * FROM orders ORDER BY invoice_date DESC LIMIT 5;",
-    "keywords": ["最近", "时间", "排序", "订单"]
+    "sql": "SELECT * FROM Orders ORDER BY OrderDate DESC LIMIT 5;",
+    "keywords": [
+      "最近",
+      "时间",
+      "排序",
+      "订单"
+    ]
   },
   {
     "id": 40,
     "category": "top_n",
     "query": "查询购买商品种类最多的10个客户",
-    "sql": "SELECT o.customer_id, COUNT(DISTINCT oi.stock_code) as product_variety FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id ORDER BY product_variety DESC LIMIT 10;",
-    "keywords": ["商品种类", "最多", "客户", "TOP"]
+    "sql": "SELECT o.CustomerID, COUNT(DISTINCT oi.ProductID) as product_variety FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID ORDER BY product_variety DESC LIMIT 10;",
+    "keywords": [
+      "商品种类",
+      "最多",
+      "客户",
+      "TOP"
+    ]
   },
   {
     "id": 41,
     "category": "date_time",
     "query": "查询2010年12月1日的订单",
-    "sql": "SELECT * FROM orders WHERE STRFTIME('%Y-%m-%d', invoice_date) = '2010-12-01';",
-    "keywords": ["日期", "2010", "12月", "1日"]
+    "sql": "SELECT * FROM Orders WHERE STRFTIME('%Y-%m-%d', OrderDate) = '2010-12-01';",
+    "keywords": [
+      "日期",
+      "2010",
+      "12月",
+      "1日"
+    ]
   },
   {
     "id": 42,
     "category": "date_time",
     "query": "查询本周的订单",
-    "sql": "SELECT * FROM orders WHERE STRFTIME('%W', invoice_date) = STRFTIME('%W', 'now');",
-    "keywords": ["本周", "周", "时间", "订单"]
+    "sql": "SELECT * FROM Orders WHERE STRFTIME('%W', OrderDate) = STRFTIME('%W', 'now');",
+    "keywords": [
+      "本周",
+      "周",
+      "时间",
+      "订单"
+    ]
   },
   {
     "id": 43,
     "category": "date_time",
     "query": "查询上午8点到10点之间的订单",
-    "sql": "SELECT * FROM orders WHERE CAST(STRFTIME('%H', invoice_date) AS INTEGER) BETWEEN 8 AND 10;",
-    "keywords": ["时间", "小时", "上午", "范围"]
+    "sql": "SELECT * FROM Orders WHERE CAST(STRFTIME('%H', OrderDate) AS INTEGER) BETWEEN 8 AND 10;",
+    "keywords": [
+      "时间",
+      "小时",
+      "上午",
+      "范围"
+    ]
   },
   {
     "id": 44,
     "category": "date_time",
     "query": "查询12月份的订单总额",
-    "sql": "SELECT SUM(oi.quantity * oi.unit_price) as total FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE STRFTIME('%m', o.invoice_date) = '12';",
-    "keywords": ["12月", "月份", "总额", "时间"]
+    "sql": "SELECT SUM(oi.Quantity * oi.UnitPrice) as total FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE STRFTIME('%m', o.OrderDate) = '12';",
+    "keywords": [
+      "12月",
+      "月份",
+      "总额",
+      "时间"
+    ]
   },
   {
     "id": 45,
     "category": "date_time",
     "query": "查询2010年第四季度的订单",
-    "sql": "SELECT * FROM orders WHERE invoice_date BETWEEN '2010-10-01' AND '2010-12-31';",
-    "keywords": ["季度", "第四季度", "时间", "范围"]
+    "sql": "SELECT * FROM Orders WHERE OrderDate BETWEEN '2010-10-01' AND '2010-12-31';",
+    "keywords": [
+      "季度",
+      "第四季度",
+      "时间",
+      "范围"
+    ]
   },
   {
     "id": 46,
     "category": "date_time",
     "query": "统计每天的订单数量",
-    "sql": "SELECT STRFTIME('%Y-%m-%d', invoice_date) as day, COUNT(*) as order_count FROM orders GROUP BY day;",
-    "keywords": ["每天", "统计", "订单", "数量"]
+    "sql": "SELECT STRFTIME('%Y-%m-%d', OrderDate) as day, COUNT(*) as order_count FROM Orders GROUP BY day;",
+    "keywords": [
+      "每天",
+      "统计",
+      "订单",
+      "数量"
+    ]
   },
   {
     "id": 47,
     "category": "date_time",
     "query": "查询每个小时的订单数量",
-    "sql": "SELECT STRFTIME('%H', invoice_date) as hour, COUNT(*) as order_count FROM orders GROUP BY hour;",
-    "keywords": ["小时", "统计", "订单", "数量"]
+    "sql": "SELECT STRFTIME('%H', OrderDate) as hour, COUNT(*) as order_count FROM Orders GROUP BY hour;",
+    "keywords": [
+      "小时",
+      "统计",
+      "订单",
+      "数量"
+    ]
   },
   {
     "id": 48,
     "category": "date_time",
     "query": "查询订单日期在2010年12月1日到15日之间的订单",
-    "sql": "SELECT * FROM orders WHERE invoice_date BETWEEN '2010-12-01' AND '2010-12-15';",
-    "keywords": ["日期", "范围", "之间", "时间"]
+    "sql": "SELECT * FROM Orders WHERE OrderDate BETWEEN '2010-12-01' AND '2010-12-15';",
+    "keywords": [
+      "日期",
+      "范围",
+      "之间",
+      "时间"
+    ]
   },
   {
     "id": 49,
     "category": "date_time",
     "query": "查询2010年每个月的销售额",
-    "sql": "SELECT STRFTIME('%Y-%m', o.invoice_date) as month, SUM(oi.quantity * oi.unit_price) as total FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE STRFTIME('%Y', o.invoice_date) = '2010' GROUP BY month;",
-    "keywords": ["每个月", "销售额", "2010", "统计"]
+    "sql": "SELECT STRFTIME('%Y-%m', o.OrderDate) as month, SUM(oi.Quantity * oi.UnitPrice) as total FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE STRFTIME('%Y', o.OrderDate) = '2010' GROUP BY month;",
+    "keywords": [
+      "每个月",
+      "销售额",
+      "2010",
+      "统计"
+    ]
   },
   {
     "id": 50,
     "category": "date_time",
     "query": "查询最近7天的订单",
-    "sql": "SELECT * FROM orders WHERE invoice_date >= DATE('now', '-7 days');",
-    "keywords": ["最近", "7天", "时间", "订单"]
+    "sql": "SELECT * FROM Orders WHERE OrderDate >= DATE('now', '-7 days');",
+    "keywords": [
+      "最近",
+      "7天",
+      "时间",
+      "订单"
+    ]
   },
   {
     "id": 51,
     "category": "complex",
     "query": "查询2010年12月销售额最高的10个商品及其描述",
-    "sql": "SELECT p.stock_code, p.description, SUM(oi.quantity * oi.unit_price) as total FROM order_items oi JOIN orders o ON oi.invoice_no = o.invoice_no JOIN products p ON oi.stock_code = p.stock_code WHERE STRFTIME('%Y-%m', o.invoice_date) = '2010-12' GROUP BY p.stock_code ORDER BY total DESC LIMIT 10;",
-    "keywords": ["销售额", "最高", "商品", "描述", "2010", "12月"]
+    "sql": "SELECT p.ProductID, p.ProductName, SUM(oi.Quantity * oi.UnitPrice) as total FROM \"Order Details\" oi JOIN Orders o ON oi.OrderID = o.OrderID JOIN Products p ON oi.ProductID = p.ProductID WHERE STRFTIME('%Y-%m', o.OrderDate) = '2010-12' GROUP BY p.ProductID ORDER BY total DESC LIMIT 10;",
+    "keywords": [
+      "销售额",
+      "最高",
+      "商品",
+      "描述",
+      "2010",
+      "12月"
+    ]
   },
   {
     "id": 52,
     "category": "complex",
     "query": "查询购买过商品85123A的所有客户信息",
-    "sql": "SELECT DISTINCT o.customer_id, o.country FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE oi.stock_code = '85123A';",
-    "keywords": ["购买", "客户", "商品", "关联"]
+    "sql": "SELECT DISTINCT o.CustomerID, o.ShipCountry FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE oi.ProductID = '85123A';",
+    "keywords": [
+      "购买",
+      "客户",
+      "商品",
+      "关联"
+    ]
   },
   {
     "id": 53,
     "category": "complex",
     "query": "查询每个国家在2010年12月的订单数和总销售额",
-    "sql": "SELECT o.country, COUNT(DISTINCT o.invoice_no) as order_count, SUM(oi.quantity * oi.unit_price) as total_amount FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE STRFTIME('%Y-%m', o.invoice_date) = '2010-12' GROUP BY o.country;",
-    "keywords": ["国家", "订单数", "销售额", "2010", "12月"]
+    "sql": "SELECT o.ShipCountry, COUNT(DISTINCT o.OrderID) as order_count, SUM(oi.Quantity * oi.UnitPrice) as total_amount FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE STRFTIME('%Y-%m', o.OrderDate) = '2010-12' GROUP BY o.ShipCountry;",
+    "keywords": [
+      "国家",
+      "订单数",
+      "销售额",
+      "2010",
+      "12月"
+    ]
   },
   {
     "id": 54,
     "category": "complex",
     "query": "查询订单数量超过5的客户及其订单总额",
-    "sql": "SELECT o.customer_id, COUNT(DISTINCT o.invoice_no) as order_count, SUM(oi.quantity * oi.unit_price) as total_amount FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id HAVING order_count > 5;",
-    "keywords": ["订单数", "超过", "客户", "总额"]
+    "sql": "SELECT o.CustomerID, COUNT(DISTINCT o.OrderID) as order_count, SUM(oi.Quantity * oi.UnitPrice) as total_amount FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID HAVING order_count > 5;",
+    "keywords": [
+      "订单数",
+      "超过",
+      "客户",
+      "总额"
+    ]
   },
   {
     "id": 55,
     "category": "complex",
     "query": "查询每个商品在不同国家的销售数量",
-    "sql": "SELECT oi.stock_code, o.country, SUM(oi.quantity) as total_quantity FROM order_items oi JOIN orders o ON oi.invoice_no = o.invoice_no GROUP BY oi.stock_code, o.country;",
-    "keywords": ["商品", "国家", "销售", "数量"]
+    "sql": "SELECT oi.ProductID, o.ShipCountry, SUM(oi.Quantity) as total_quantity FROM \"Order Details\" oi JOIN Orders o ON oi.OrderID = o.OrderID GROUP BY oi.ProductID, o.ShipCountry;",
+    "keywords": [
+      "商品",
+      "国家",
+      "销售",
+      "数量"
+    ]
   },
   {
     "id": 56,
     "category": "complex",
     "query": "查询平均订单金额超过100的国家",
-    "sql": "SELECT o.country, AVG(oi.quantity * oi.unit_price) as avg_amount FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.country HAVING avg_amount > 100;",
-    "keywords": ["平均", "订单金额", "超过", "国家"]
+    "sql": "SELECT o.ShipCountry, AVG(oi.Quantity * oi.UnitPrice) as avg_amount FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.ShipCountry HAVING avg_amount > 100;",
+    "keywords": [
+      "平均",
+      "订单金额",
+      "超过",
+      "国家"
+    ]
   },
   {
     "id": 57,
     "category": "complex",
     "query": "查询购买过3个以上不同商品的客户",
-    "sql": "SELECT o.customer_id, COUNT(DISTINCT oi.stock_code) as product_count FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id HAVING product_count >= 3;",
-    "keywords": ["购买", "不同", "商品", "数量", "客户"]
+    "sql": "SELECT o.CustomerID, COUNT(DISTINCT oi.ProductID) as product_count FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID HAVING product_count >= 3;",
+    "keywords": [
+      "购买",
+      "不同",
+      "商品",
+      "数量",
+      "客户"
+    ]
   },
   {
     "id": 58,
     "category": "complex",
     "query": "查询每个月的销售额增长趋势",
-    "sql": "SELECT STRFTIME('%Y-%m', o.invoice_date) as month, SUM(oi.quantity * oi.unit_price) as monthly_total FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY month ORDER BY month;",
-    "keywords": ["月份", "销售额", "趋势", "增长"]
+    "sql": "SELECT STRFTIME('%Y-%m', o.OrderDate) as month, SUM(oi.Quantity * oi.UnitPrice) as monthly_total FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY month ORDER BY month;",
+    "keywords": [
+      "月份",
+      "销售额",
+      "趋势",
+      "增长"
+    ]
   },
   {
     "id": 59,
     "category": "complex",
     "query": "查询英国客户购买的所有商品及数量",
-    "sql": "SELECT p.stock_code, p.description, SUM(oi.quantity) as total_quantity FROM order_items oi JOIN orders o ON oi.invoice_no = o.invoice_no JOIN products p ON oi.stock_code = p.stock_code WHERE o.country = 'United Kingdom' GROUP BY p.stock_code;",
-    "keywords": ["国家", "英国", "商品", "数量", "购买"]
+    "sql": "SELECT p.ProductID, p.ProductName, SUM(oi.Quantity) as total_quantity FROM \"Order Details\" oi JOIN Orders o ON oi.OrderID = o.OrderID JOIN Products p ON oi.ProductID = p.ProductID WHERE o.ShipCountry = 'United Kingdom' GROUP BY p.ProductID;",
+    "keywords": [
+      "国家",
+      "英国",
+      "商品",
+      "数量",
+      "购买"
+    ]
   },
   {
     "id": 60,
     "category": "complex",
     "query": "查询单笔订单金额超过平均值的订单",
-    "sql": "SELECT oi.invoice_no, SUM(oi.quantity * oi.unit_price) as total FROM order_items oi GROUP BY oi.invoice_no HAVING total > (SELECT AVG(order_total) FROM (SELECT SUM(quantity * unit_price) as order_total FROM order_items GROUP BY invoice_no));",
-    "keywords": ["订单", "金额", "平均", "超过"]
+    "sql": "SELECT oi.OrderID, SUM(oi.Quantity * oi.UnitPrice) as total FROM \"Order Details\" oi GROUP BY oi.OrderID HAVING total > (SELECT AVG(order_total) FROM (SELECT SUM(Quantity * UnitPrice) as order_total FROM \"Order Details\" GROUP BY OrderID));",
+    "keywords": [
+      "订单",
+      "金额",
+      "平均",
+      "超过"
+    ]
   },
   {
     "id": 61,
     "category": "complex",
     "query": "查询每个客户的首次购买时间和总消费",
-    "sql": "SELECT o.customer_id, MIN(o.invoice_date) as first_order_date, SUM(oi.quantity * oi.unit_price) as total_amount FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id;",
-    "keywords": ["客户", "首次", "购买", "时间", "总消费"]
+    "sql": "SELECT o.CustomerID, MIN(o.OrderDate) as first_order_date, SUM(oi.Quantity * oi.UnitPrice) as total_amount FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID;",
+    "keywords": [
+      "客户",
+      "首次",
+      "购买",
+      "时间",
+      "总消费"
+    ]
   },
   {
     "id": 62,
     "category": "complex",
     "query": "查询在多个国家都有销售的商品",
-    "sql": "SELECT oi.stock_code, COUNT(DISTINCT o.country) as country_count FROM order_items oi JOIN orders o ON oi.invoice_no = o.invoice_no GROUP BY oi.stock_code HAVING country_count > 1;",
-    "keywords": ["商品", "多个", "国家", "销售"]
+    "sql": "SELECT oi.ProductID, COUNT(DISTINCT o.ShipCountry) as country_count FROM \"Order Details\" oi JOIN Orders o ON oi.OrderID = o.OrderID GROUP BY oi.ProductID HAVING country_count > 1;",
+    "keywords": [
+      "商品",
+      "多个",
+      "国家",
+      "销售"
+    ]
   },
   {
     "id": 63,
     "category": "complex",
     "query": "查询客户17850在所有订单中购买的不同商品数量",
-    "sql": "SELECT COUNT(DISTINCT oi.stock_code) as unique_products FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE o.customer_id = '17850';",
-    "keywords": ["客户", "不同", "商品", "数量"]
+    "sql": "SELECT COUNT(DISTINCT oi.ProductID) as unique_products FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE o.CustomerID = '17850';",
+    "keywords": [
+      "客户",
+      "不同",
+      "商品",
+      "数量"
+    ]
   },
   {
     "id": 64,
     "category": "complex",
     "query": "查询每个国家销售额占比",
-    "sql": "SELECT o.country, SUM(oi.quantity * oi.unit_price) as country_total, (SUM(oi.quantity * oi.unit_price) * 100.0 / (SELECT SUM(quantity * unit_price) FROM order_items)) as percentage FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.country;",
-    "keywords": ["国家", "销售额", "占比", "百分比"]
+    "sql": "SELECT o.ShipCountry, SUM(oi.Quantity * oi.UnitPrice) as country_total, (SUM(oi.Quantity * oi.UnitPrice) * 100.0 / (SELECT SUM(Quantity * UnitPrice) FROM \"Order Details\")) as percentage FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.ShipCountry;",
+    "keywords": [
+      "国家",
+      "销售额",
+      "占比",
+      "百分比"
+    ]
   },
   {
     "id": 65,
     "category": "complex",
     "query": "查询同一天内下单超过2次的客户",
-    "sql": "SELECT customer_id, STRFTIME('%Y-%m-%d', invoice_date) as order_date, COUNT(*) as order_count FROM orders GROUP BY customer_id, order_date HAVING order_count > 2;",
-    "keywords": ["客户", "同一天", "下单", "超过"]
+    "sql": "SELECT CustomerID, STRFTIME('%Y-%m-%d', OrderDate) as order_date, COUNT(*) as order_count FROM Orders GROUP BY CustomerID, order_date HAVING order_count > 2;",
+    "keywords": [
+      "客户",
+      "同一天",
+      "下单",
+      "超过"
+    ]
   },
   {
     "id": 66,
     "category": "boundary",
     "query": "查询所有有客户ID的订单",
-    "sql": "SELECT * FROM orders WHERE customer_id IS NOT NULL;",
-    "keywords": ["客户ID", "非空", "NULL", "筛选"]
+    "sql": "SELECT * FROM Orders WHERE CustomerID IS NOT NULL;",
+    "keywords": [
+      "客户ID",
+      "非空",
+      "NULL",
+      "筛选"
+    ]
   },
   {
     "id": 67,
     "category": "boundary",
     "query": "查询客户ID为空的订单数量",
-    "sql": "SELECT COUNT(*) as null_customer_count FROM orders WHERE customer_id IS NULL;",
-    "keywords": ["客户ID", "为空", "NULL", "统计"]
+    "sql": "SELECT COUNT(*) as null_customer_count FROM Orders WHERE CustomerID IS NULL;",
+    "keywords": [
+      "客户ID",
+      "为空",
+      "NULL",
+      "统计"
+    ]
   },
   {
     "id": 68,
     "category": "boundary",
     "query": "查询所有不重复的国家列表",
-    "sql": "SELECT DISTINCT country FROM orders ORDER BY country;",
-    "keywords": ["去重", "不重复", "国家", "列表"]
+    "sql": "SELECT DISTINCT ShipCountry FROM Orders ORDER BY ShipCountry;",
+    "keywords": [
+      "去重",
+      "不重复",
+      "国家",
+      "列表"
+    ]
   },
   {
     "id": 69,
     "category": "boundary",
     "query": "查询订单金额为0或负数的异常订单",
-    "sql": "SELECT oi.invoice_no, SUM(oi.quantity * oi.unit_price) as total FROM order_items oi GROUP BY oi.invoice_no HAVING total <= 0;",
-    "keywords": ["异常", "金额", "0", "负数"]
+    "sql": "SELECT oi.OrderID, SUM(oi.Quantity * oi.UnitPrice) as total FROM \"Order Details\" oi GROUP BY oi.OrderID HAVING total <= 0;",
+    "keywords": [
+      "异常",
+      "金额",
+      "0",
+      "负数"
+    ]
   },
   {
     "id": 70,
     "category": "boundary",
     "query": "查询所有客户及其订单数量，包括没有订单的客户",
-    "sql": "SELECT c.customer_id, COUNT(o.invoice_no) as order_count FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id;",
-    "keywords": ["左连接", "包括", "没有", "订单"]
+    "sql": "SELECT c.CustomerID, COUNT(o.OrderID) as order_count FROM Customers c LEFT JOIN Orders o ON c.CustomerID = o.CustomerID GROUP BY c.CustomerID;",
+    "keywords": [
+      "左连接",
+      "包括",
+      "没有",
+      "订单"
+    ]
   },
   {
     "id": 71,
     "category": "boundary",
     "query": "根据单价将商品分为高中低档",
-    "sql": "SELECT stock_code, unit_price, CASE WHEN unit_price > 10 THEN '高档' WHEN unit_price > 5 THEN '中档' ELSE '低档' END as price_level FROM order_items;",
-    "keywords": ["分类", "条件", "高中低", "CASE"]
+    "sql": "SELECT ProductID, UnitPrice, CASE WHEN UnitPrice > 10 THEN '高档' WHEN UnitPrice > 5 THEN '中档' ELSE '低档' END as price_level FROM \"Order Details\";",
+    "keywords": [
+      "分类",
+      "条件",
+      "高中低",
+      "CASE"
+    ]
   },
   {
     "id": 72,
     "category": "boundary",
     "query": "查询购买数量为负数的退货记录",
-    "sql": "SELECT * FROM order_items WHERE quantity < 0;",
-    "keywords": ["负数", "退货", "数量", "筛选"]
+    "sql": "SELECT * FROM \"Order Details\" WHERE Quantity < 0;",
+    "keywords": [
+      "负数",
+      "退货",
+      "数量",
+      "筛选"
+    ]
   },
   {
     "id": 73,
     "category": "boundary",
     "query": "查询商品描述为空的商品",
-    "sql": "SELECT * FROM products WHERE description IS NULL OR description = '';",
-    "keywords": ["描述", "为空", "NULL", "筛选"]
+    "sql": "SELECT * FROM Products WHERE ProductName IS NULL OR ProductName = '';",
+    "keywords": [
+      "描述",
+      "为空",
+      "NULL",
+      "筛选"
+    ]
   },
   {
     "id": 74,
     "category": "boundary",
     "query": "统计每个订单的商品种类数量，包括单一商品订单",
-    "sql": "SELECT invoice_no, COUNT(DISTINCT stock_code) as product_types FROM order_items GROUP BY invoice_no;",
-    "keywords": ["商品种类", "去重", "统计", "订单"]
+    "sql": "SELECT OrderID, COUNT(DISTINCT ProductID) as product_types FROM \"Order Details\" GROUP BY OrderID;",
+    "keywords": [
+      "商品种类",
+      "去重",
+      "统计",
+      "订单"
+    ]
   },
-
   {
     "id": 75,
     "category": "window_function",
     "difficulty": "hard",
     "query": "给每个订单按金额排名",
-    "sql": "WITH order_totals AS (SELECT invoice_no, SUM(quantity * unit_price) as total FROM order_items GROUP BY invoice_no) SELECT invoice_no, total, ROW_NUMBER() OVER (ORDER BY total DESC) as rank FROM order_totals;",
-    "keywords": ["窗口函数", "ROW_NUMBER", "排名", "订单金额"],
+    "sql": "WITH order_totals AS (SELECT OrderID, SUM(Quantity * UnitPrice) as total FROM \"Order Details\" GROUP BY OrderID) SELECT OrderID, total, ROW_NUMBER() OVER (ORDER BY total DESC) as rank FROM order_totals;",
+    "keywords": [
+      "窗口函数",
+      "ROW_NUMBER",
+      "排名",
+      "订单金额"
+    ],
     "business_scenario": "订单价值排行"
   },
   {
@@ -532,8 +906,13 @@
     "category": "window_function",
     "difficulty": "hard",
     "query": "查询每个国家内订单金额排名前3的订单",
-    "sql": "WITH order_amounts AS (SELECT o.invoice_no, o.country, SUM(oi.quantity * oi.unit_price) as total FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.invoice_no, o.country), ranked_orders AS (SELECT invoice_no, country, total, ROW_NUMBER() OVER (PARTITION BY country ORDER BY total DESC) as rank FROM order_amounts) SELECT * FROM ranked_orders WHERE rank <= 3;",
-    "keywords": ["窗口函数", "PARTITION BY", "ROW_NUMBER", "分组排名"],
+    "sql": "WITH order_amounts AS (SELECT o.OrderID, o.ShipCountry, SUM(oi.Quantity * oi.UnitPrice) as total FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.OrderID, o.ShipCountry), ranked_orders AS (SELECT OrderID, ShipCountry, total, ROW_NUMBER() OVER (PARTITION BY ShipCountry ORDER BY total DESC) as rank FROM order_amounts) SELECT * FROM ranked_orders WHERE rank <= 3;",
+    "keywords": [
+      "窗口函数",
+      "PARTITION BY",
+      "ROW_NUMBER",
+      "分组排名"
+    ],
     "business_scenario": "分国家TOP订单分析"
   },
   {
@@ -541,8 +920,13 @@
     "category": "window_function",
     "difficulty": "hard",
     "query": "计算每个客户的累计消费金额",
-    "sql": "WITH customer_orders AS (SELECT o.customer_id, o.invoice_date, SUM(oi.quantity * oi.unit_price) as order_amount FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id, o.invoice_no, o.invoice_date) SELECT customer_id, invoice_date, order_amount, SUM(order_amount) OVER (PARTITION BY customer_id ORDER BY invoice_date) as cumulative_amount FROM customer_orders;",
-    "keywords": ["窗口函数", "SUM OVER", "累计求和", "客户消费"],
+    "sql": "WITH customer_orders AS (SELECT o.CustomerID, o.OrderDate, SUM(oi.Quantity * oi.UnitPrice) as order_amount FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID, o.OrderID, o.OrderDate) SELECT CustomerID, OrderDate, order_amount, SUM(order_amount) OVER (PARTITION BY CustomerID ORDER BY OrderDate) as cumulative_amount FROM customer_orders;",
+    "keywords": [
+      "窗口函数",
+      "SUM OVER",
+      "累计求和",
+      "客户消费"
+    ],
     "business_scenario": "客户生命周期价值(LTV)分析"
   },
   {
@@ -550,8 +934,13 @@
     "category": "window_function",
     "difficulty": "hard",
     "query": "查询每个商品的销售额及其在所有商品中的排名",
-    "sql": "WITH product_sales AS (SELECT stock_code, SUM(quantity * unit_price) as total_sales FROM order_items GROUP BY stock_code) SELECT stock_code, total_sales, RANK() OVER (ORDER BY total_sales DESC) as sales_rank, DENSE_RANK() OVER (ORDER BY total_sales DESC) as dense_rank FROM product_sales;",
-    "keywords": ["窗口函数", "RANK", "DENSE_RANK", "商品排名"],
+    "sql": "WITH product_sales AS (SELECT ProductID, SUM(Quantity * UnitPrice) as total_sales FROM \"Order Details\" GROUP BY ProductID) SELECT ProductID, total_sales, RANK() OVER (ORDER BY total_sales DESC) as sales_rank, DENSE_RANK() OVER (ORDER BY total_sales DESC) as dense_rank FROM product_sales;",
+    "keywords": [
+      "窗口函数",
+      "RANK",
+      "DENSE_RANK",
+      "商品排名"
+    ],
     "business_scenario": "商品销售排行榜"
   },
   {
@@ -559,8 +948,13 @@
     "category": "window_function",
     "difficulty": "hard",
     "query": "计算每个月的销售额及环比增长率",
-    "sql": "WITH monthly_sales AS (SELECT STRFTIME('%Y-%m', o.invoice_date) as month, SUM(oi.quantity * oi.unit_price) as sales FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY month) SELECT month, sales, LAG(sales) OVER (ORDER BY month) as prev_month_sales, ROUND((sales - LAG(sales) OVER (ORDER BY month)) * 100.0 / LAG(sales) OVER (ORDER BY month), 2) as growth_rate FROM monthly_sales;",
-    "keywords": ["窗口函数", "LAG", "环比", "增长率"],
+    "sql": "WITH monthly_sales AS (SELECT STRFTIME('%Y-%m', o.OrderDate) as month, SUM(oi.Quantity * oi.UnitPrice) as sales FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY month) SELECT month, sales, LAG(sales) OVER (ORDER BY month) as prev_month_sales, ROUND((sales - LAG(sales) OVER (ORDER BY month)) * 100.0 / LAG(sales) OVER (ORDER BY month), 2) as growth_rate FROM monthly_sales;",
+    "keywords": [
+      "窗口函数",
+      "LAG",
+      "环比",
+      "增长率"
+    ],
     "business_scenario": "月度销售趋势分析"
   },
   {
@@ -568,8 +962,13 @@
     "category": "window_function",
     "difficulty": "hard",
     "query": "查询每个客户的第一笔订单和最后一笔订单的时间差",
-    "sql": "WITH customer_order_dates AS (SELECT customer_id, invoice_date, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY invoice_date) as first_order, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY invoice_date DESC) as last_order FROM orders) SELECT DISTINCT customer_id, (SELECT invoice_date FROM customer_order_dates WHERE customer_id = cod.customer_id AND first_order = 1) as first_order_date, (SELECT invoice_date FROM customer_order_dates WHERE customer_id = cod.customer_id AND last_order = 1) as last_order_date FROM customer_order_dates cod;",
-    "keywords": ["窗口函数", "ROW_NUMBER", "首次订单", "最后订单"],
+    "sql": "WITH customer_order_dates AS (SELECT CustomerID, OrderDate, ROW_NUMBER() OVER (PARTITION BY CustomerID ORDER BY OrderDate) as first_order, ROW_NUMBER() OVER (PARTITION BY CustomerID ORDER BY OrderDate DESC) as last_order FROM Orders) SELECT DISTINCT CustomerID, (SELECT OrderDate FROM customer_order_dates WHERE CustomerID = cod.CustomerID AND first_order = 1) as first_order_date, (SELECT OrderDate FROM customer_order_dates WHERE CustomerID = cod.CustomerID AND last_order = 1) as last_order_date FROM customer_order_dates cod;",
+    "keywords": [
+      "窗口函数",
+      "ROW_NUMBER",
+      "首次订单",
+      "最后订单"
+    ],
     "business_scenario": "客户活跃周期分析"
   },
   {
@@ -577,8 +976,13 @@
     "category": "window_function",
     "difficulty": "expert",
     "query": "计算每个商品最近7次交易的平均销售额",
-    "sql": "WITH product_transactions AS (SELECT stock_code, invoice_date, quantity * unit_price as amount FROM order_items oi JOIN orders o ON oi.invoice_no = o.invoice_no) SELECT stock_code, invoice_date, amount, AVG(amount) OVER (PARTITION BY stock_code ORDER BY invoice_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as moving_avg_7 FROM product_transactions;",
-    "keywords": ["窗口函数", "AVG OVER", "移动平均", "ROWS BETWEEN"],
+    "sql": "WITH product_transactions AS (SELECT ProductID, OrderDate, Quantity * UnitPrice as amount FROM \"Order Details\" oi JOIN Orders o ON oi.OrderID = o.OrderID) SELECT ProductID, OrderDate, amount, AVG(amount) OVER (PARTITION BY ProductID ORDER BY OrderDate ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as moving_avg_7 FROM product_transactions;",
+    "keywords": [
+      "窗口函数",
+      "AVG OVER",
+      "移动平均",
+      "ROWS BETWEEN"
+    ],
     "business_scenario": "商品价格走势分析"
   },
   {
@@ -586,8 +990,13 @@
     "category": "window_function",
     "difficulty": "hard",
     "query": "将客户按消费金额分为5个等级",
-    "sql": "WITH customer_spending AS (SELECT o.customer_id, SUM(oi.quantity * oi.unit_price) as total_spent FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id) SELECT customer_id, total_spent, NTILE(5) OVER (ORDER BY total_spent DESC) as spending_tier FROM customer_spending;",
-    "keywords": ["窗口函数", "NTILE", "分桶", "客户分层"],
+    "sql": "WITH customer_spending AS (SELECT o.CustomerID, SUM(oi.Quantity * oi.UnitPrice) as total_spent FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID) SELECT CustomerID, total_spent, NTILE(5) OVER (ORDER BY total_spent DESC) as spending_tier FROM customer_spending;",
+    "keywords": [
+      "窗口函数",
+      "NTILE",
+      "分桶",
+      "客户分层"
+    ],
     "business_scenario": "客户价值分层"
   },
   {
@@ -595,8 +1004,13 @@
     "category": "window_function",
     "difficulty": "hard",
     "query": "查询每个国家每月的销售额及当月在该国的排名",
-    "sql": "WITH country_monthly_sales AS (SELECT o.country, STRFTIME('%Y-%m', o.invoice_date) as month, SUM(oi.quantity * oi.unit_price) as sales FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.country, month) SELECT country, month, sales, RANK() OVER (PARTITION BY country ORDER BY sales DESC) as monthly_rank_in_country FROM country_monthly_sales;",
-    "keywords": ["窗口函数", "PARTITION BY", "RANK", "分组排名"],
+    "sql": "WITH country_monthly_sales AS (SELECT o.ShipCountry, STRFTIME('%Y-%m', o.OrderDate) as month, SUM(oi.Quantity * oi.UnitPrice) as sales FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.ShipCountry, month) SELECT ShipCountry, month, sales, RANK() OVER (PARTITION BY ShipCountry ORDER BY sales DESC) as monthly_rank_in_country FROM country_monthly_sales;",
+    "keywords": [
+      "窗口函数",
+      "PARTITION BY",
+      "RANK",
+      "分组排名"
+    ],
     "business_scenario": "国家月度销售表现"
   },
   {
@@ -604,18 +1018,27 @@
     "category": "window_function",
     "difficulty": "hard",
     "query": "查询每个商品的下一次被购买的时间",
-    "sql": "WITH product_purchase_dates AS (SELECT DISTINCT stock_code, invoice_date FROM order_items oi JOIN orders o ON oi.invoice_no = o.invoice_no) SELECT stock_code, invoice_date, LEAD(invoice_date) OVER (PARTITION BY stock_code ORDER BY invoice_date) as next_purchase_date FROM product_purchase_dates;",
-    "keywords": ["窗口函数", "LEAD", "下一个值", "商品复购"],
+    "sql": "WITH product_purchase_dates AS (SELECT DISTINCT ProductID, OrderDate FROM \"Order Details\" oi JOIN Orders o ON oi.OrderID = o.OrderID) SELECT ProductID, OrderDate, LEAD(OrderDate) OVER (PARTITION BY ProductID ORDER BY OrderDate) as next_purchase_date FROM product_purchase_dates;",
+    "keywords": [
+      "窗口函数",
+      "LEAD",
+      "下一个值",
+      "商品复购"
+    ],
     "business_scenario": "商品复购间隔分析"
   },
-
   {
     "id": 85,
     "category": "cte",
     "difficulty": "hard",
     "query": "使用CTE查询高价值客户及其订单详情",
-    "sql": "WITH high_value_customers AS (SELECT o.customer_id, SUM(oi.quantity * oi.unit_price) as total_spent FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id HAVING total_spent > 10000) SELECT o.invoice_no, o.customer_id, o.invoice_date, hvc.total_spent FROM orders o JOIN high_value_customers hvc ON o.customer_id = hvc.customer_id ORDER BY hvc.total_spent DESC;",
-    "keywords": ["CTE", "WITH子句", "高价值客户", "订单详情"],
+    "sql": "WITH high_value_customers AS (SELECT o.CustomerID, SUM(oi.Quantity * oi.UnitPrice) as total_spent FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID HAVING total_spent > 10000) SELECT o.OrderID, o.CustomerID, o.OrderDate, hvc.total_spent FROM Orders o JOIN high_value_customers hvc ON o.CustomerID = hvc.CustomerID ORDER BY hvc.total_spent DESC;",
+    "keywords": [
+      "CTE",
+      "WITH子句",
+      "高价值客户",
+      "订单详情"
+    ],
     "business_scenario": "VIP客户订单分析"
   },
   {
@@ -623,8 +1046,13 @@
     "category": "cte",
     "difficulty": "hard",
     "query": "使用多层CTE分析客户购买频次和金额",
-    "sql": "WITH customer_metrics AS (SELECT o.customer_id, COUNT(DISTINCT o.invoice_no) as order_count, SUM(oi.quantity * oi.unit_price) as total_spent FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id), customer_segments AS (SELECT customer_id, order_count, total_spent, CASE WHEN order_count >= 10 AND total_spent > 5000 THEN '高频高额' WHEN order_count >= 10 THEN '高频低额' WHEN total_spent > 5000 THEN '低频高额' ELSE '低频低额' END as segment FROM customer_metrics) SELECT segment, COUNT(*) as customer_count, AVG(order_count) as avg_orders, AVG(total_spent) as avg_spent FROM customer_segments GROUP BY segment;",
-    "keywords": ["CTE", "多层CTE", "客户分群", "RFM"],
+    "sql": "WITH customer_metrics AS (SELECT o.CustomerID, COUNT(DISTINCT o.OrderID) as order_count, SUM(oi.Quantity * oi.UnitPrice) as total_spent FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID), customer_segments AS (SELECT CustomerID, order_count, total_spent, CASE WHEN order_count >= 10 AND total_spent > 5000 THEN '高频高额' WHEN order_count >= 10 THEN '高频低额' WHEN total_spent > 5000 THEN '低频高额' ELSE '低频低额' END as segment FROM customer_metrics) SELECT segment, COUNT(*) as customer_count, AVG(order_count) as avg_orders, AVG(total_spent) as avg_spent FROM customer_segments GROUP BY segment;",
+    "keywords": [
+      "CTE",
+      "多层CTE",
+      "客户分群",
+      "RFM"
+    ],
     "business_scenario": "客户价值分析"
   },
   {
@@ -632,8 +1060,13 @@
     "category": "cte",
     "difficulty": "hard",
     "query": "查询每个国家的新客户占比",
-    "sql": "WITH first_orders AS (SELECT customer_id, MIN(invoice_date) as first_order_date FROM orders GROUP BY customer_id), monthly_new_customers AS (SELECT STRFTIME('%Y-%m', first_order_date) as month, COUNT(*) as new_customers FROM first_orders GROUP BY month), monthly_all_customers AS (SELECT STRFTIME('%Y-%m', invoice_date) as month, COUNT(DISTINCT customer_id) as all_customers FROM orders GROUP BY month) SELECT mnc.month, mnc.new_customers, mac.all_customers, ROUND(mnc.new_customers * 100.0 / mac.all_customers, 2) as new_customer_rate FROM monthly_new_customers mnc JOIN monthly_all_customers mac ON mnc.month = mac.month;",
-    "keywords": ["CTE", "新客户", "占比", "增长分析"],
+    "sql": "WITH first_orders AS (SELECT CustomerID, MIN(OrderDate) as first_order_date FROM Orders GROUP BY CustomerID), monthly_new_customers AS (SELECT STRFTIME('%Y-%m', first_order_date) as month, COUNT(*) as new_customers FROM first_orders GROUP BY month), monthly_all_customers AS (SELECT STRFTIME('%Y-%m', OrderDate) as month, COUNT(DISTINCT CustomerID) as all_customers FROM Orders GROUP BY month) SELECT mnc.month, mnc.new_customers, mac.all_customers, ROUND(mnc.new_customers * 100.0 / mac.all_customers, 2) as new_customer_rate FROM monthly_new_customers mnc JOIN monthly_all_customers mac ON mnc.month = mac.month;",
+    "keywords": [
+      "CTE",
+      "新客户",
+      "占比",
+      "增长分析"
+    ],
     "business_scenario": "新客获客效率分析"
   },
   {
@@ -641,8 +1074,13 @@
     "category": "cte",
     "difficulty": "expert",
     "query": "使用CTE计算客户流失率",
-    "sql": "WITH customer_last_order AS (SELECT customer_id, MAX(invoice_date) as last_order_date FROM orders GROUP BY customer_id), active_customers AS (SELECT customer_id FROM customer_last_order WHERE JULIANDAY('2011-12-31') - JULIANDAY(last_order_date) <= 90), churned_customers AS (SELECT customer_id FROM customer_last_order WHERE JULIANDAY('2011-12-31') - JULIANDAY(last_order_date) > 90) SELECT (SELECT COUNT(*) FROM churned_customers) as churned_count, (SELECT COUNT(*) FROM customer_last_order) as total_count, ROUND((SELECT COUNT(*) FROM churned_customers) * 100.0 / (SELECT COUNT(*) FROM customer_last_order), 2) as churn_rate;",
-    "keywords": ["CTE", "流失率", "客户流失", "留存分析"],
+    "sql": "WITH customer_last_order AS (SELECT CustomerID, MAX(OrderDate) as last_order_date FROM Orders GROUP BY CustomerID), active_customers AS (SELECT CustomerID FROM customer_last_order WHERE JULIANDAY('2011-12-31') - JULIANDAY(last_order_date) <= 90), churned_customers AS (SELECT CustomerID FROM customer_last_order WHERE JULIANDAY('2011-12-31') - JULIANDAY(last_order_date) > 90) SELECT (SELECT COUNT(*) FROM churned_customers) as churned_count, (SELECT COUNT(*) FROM customer_last_order) as total_count, ROUND((SELECT COUNT(*) FROM churned_customers) * 100.0 / (SELECT COUNT(*) FROM customer_last_order), 2) as churn_rate;",
+    "keywords": [
+      "CTE",
+      "流失率",
+      "客户流失",
+      "留存分析"
+    ],
     "business_scenario": "客户流失分析"
   },
   {
@@ -650,18 +1088,26 @@
     "category": "cte",
     "difficulty": "hard",
     "query": "使用CTE分析商品关联购买",
-    "sql": "WITH product_pairs AS (SELECT oi1.stock_code as product_a, oi2.stock_code as product_b, COUNT(DISTINCT oi1.invoice_no) as co_purchase_count FROM order_items oi1 JOIN order_items oi2 ON oi1.invoice_no = oi2.invoice_no AND oi1.stock_code < oi2.stock_code GROUP BY oi1.stock_code, oi2.stock_code) SELECT product_a, product_b, co_purchase_count FROM product_pairs WHERE co_purchase_count >= 5 ORDER BY co_purchase_count DESC LIMIT 20;",
-    "keywords": ["CTE", "关联分析", "购物篮", "商品关联"],
+    "sql": "WITH product_pairs AS (SELECT oi1.ProductID as product_a, oi2.ProductID as product_b, COUNT(DISTINCT oi1.OrderID) as co_purchase_count FROM \"Order Details\" oi1 JOIN \"Order Details\" oi2 ON oi1.OrderID = oi2.OrderID AND oi1.ProductID < oi2.ProductID GROUP BY oi1.ProductID, oi2.ProductID) SELECT product_a, product_b, co_purchase_count FROM product_pairs WHERE co_purchase_count >= 5 ORDER BY co_purchase_count DESC LIMIT 20;",
+    "keywords": [
+      "CTE",
+      "关联分析",
+      "购物篮",
+      "商品关联"
+    ],
     "business_scenario": "商品关联推荐"
   },
-
   {
     "id": 90,
     "category": "self_join",
     "difficulty": "hard",
     "query": "查询购买了相同商品的不同客户",
-    "sql": "SELECT DISTINCT o1.customer_id as customer1, o2.customer_id as customer2, oi1.stock_code FROM orders o1 JOIN order_items oi1 ON o1.invoice_no = oi1.invoice_no JOIN orders o2 ON o2.customer_id > o1.customer_id JOIN order_items oi2 ON o2.invoice_no = oi2.invoice_no AND oi1.stock_code = oi2.stock_code LIMIT 100;",
-    "keywords": ["自连接", "相同商品", "客户关联"],
+    "sql": "SELECT DISTINCT o1.CustomerID as customer1, o2.CustomerID as customer2, oi1.ProductID FROM Orders o1 JOIN \"Order Details\" oi1 ON o1.OrderID = oi1.OrderID JOIN Orders o2 ON o2.CustomerID > o1.CustomerID JOIN \"Order Details\" oi2 ON o2.OrderID = oi2.OrderID AND oi1.ProductID = oi2.ProductID LIMIT 100;",
+    "keywords": [
+      "自连接",
+      "相同商品",
+      "客户关联"
+    ],
     "business_scenario": "协同过滤推荐"
   },
   {
@@ -669,8 +1115,12 @@
     "category": "self_join",
     "difficulty": "hard",
     "query": "查询同一客户在不同订单中购买的商品对",
-    "sql": "SELECT o1.customer_id, oi1.stock_code as product1, oi2.stock_code as product2, COUNT(*) as pair_count FROM orders o1 JOIN order_items oi1 ON o1.invoice_no = oi1.invoice_no JOIN orders o2 ON o1.customer_id = o2.customer_id AND o1.invoice_no < o2.invoice_no JOIN order_items oi2 ON o2.invoice_no = oi2.invoice_no WHERE oi1.stock_code < oi2.stock_code GROUP BY o1.customer_id, oi1.stock_code, oi2.stock_code HAVING pair_count >= 2;",
-    "keywords": ["自连接", "商品对", "序列购买"],
+    "sql": "SELECT o1.CustomerID, oi1.ProductID as product1, oi2.ProductID as product2, COUNT(*) as pair_count FROM Orders o1 JOIN \"Order Details\" oi1 ON o1.OrderID = oi1.OrderID JOIN Orders o2 ON o1.CustomerID = o2.CustomerID AND o1.OrderID < o2.OrderID JOIN \"Order Details\" oi2 ON o2.OrderID = oi2.OrderID WHERE oi1.ProductID < oi2.ProductID GROUP BY o1.CustomerID, oi1.ProductID, oi2.ProductID HAVING pair_count >= 2;",
+    "keywords": [
+      "自连接",
+      "商品对",
+      "序列购买"
+    ],
     "business_scenario": "用户购买路径分析"
   },
   {
@@ -678,18 +1128,26 @@
     "category": "self_join",
     "difficulty": "hard",
     "query": "查询在同一天内发生的订单对",
-    "sql": "SELECT o1.invoice_no as order1, o2.invoice_no as order2, STRFTIME('%Y-%m-%d', o1.invoice_date) as order_date FROM orders o1 JOIN orders o2 ON o1.customer_id = o2.customer_id AND STRFTIME('%Y-%m-%d', o1.invoice_date) = STRFTIME('%Y-%m-%d', o2.invoice_date) AND o1.invoice_no < o2.invoice_no LIMIT 50;",
-    "keywords": ["自连接", "同一天", "订单对"],
+    "sql": "SELECT o1.OrderID as order1, o2.OrderID as order2, STRFTIME('%Y-%m-%d', o1.OrderDate) as order_date FROM Orders o1 JOIN Orders o2 ON o1.CustomerID = o2.CustomerID AND STRFTIME('%Y-%m-%d', o1.OrderDate) = STRFTIME('%Y-%m-%d', o2.OrderDate) AND o1.OrderID < o2.OrderID LIMIT 50;",
+    "keywords": [
+      "自连接",
+      "同一天",
+      "订单对"
+    ],
     "business_scenario": "异常订单检测"
   },
-
   {
     "id": 93,
     "category": "pivot",
     "difficulty": "hard",
     "query": "生成每个国家按月的销售额透视表",
-    "sql": "SELECT country, SUM(CASE WHEN STRFTIME('%m', o.invoice_date) = '10' THEN oi.quantity * oi.unit_price ELSE 0 END) as Oct, SUM(CASE WHEN STRFTIME('%m', o.invoice_date) = '11' THEN oi.quantity * oi.unit_price ELSE 0 END) as Nov, SUM(CASE WHEN STRFTIME('%m', o.invoice_date) = '12' THEN oi.quantity * oi.unit_price ELSE 0 END) as Dec FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE STRFTIME('%Y', o.invoice_date) = '2010' GROUP BY country;",
-    "keywords": ["数据透视", "CASE WHEN", "行转列", "月度销售"],
+    "sql": "SELECT ShipCountry, SUM(CASE WHEN STRFTIME('%m', o.OrderDate) = '10' THEN oi.Quantity * oi.UnitPrice ELSE 0 END) as Oct, SUM(CASE WHEN STRFTIME('%m', o.OrderDate) = '11' THEN oi.Quantity * oi.UnitPrice ELSE 0 END) as Nov, SUM(CASE WHEN STRFTIME('%m', o.OrderDate) = '12' THEN oi.Quantity * oi.UnitPrice ELSE 0 END) as Dec FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE STRFTIME('%Y', o.OrderDate) = '2010' GROUP BY ShipCountry;",
+    "keywords": [
+      "数据透视",
+      "CASE WHEN",
+      "行转列",
+      "月度销售"
+    ],
     "business_scenario": "销售报表生成"
   },
   {
@@ -697,18 +1155,26 @@
     "category": "pivot",
     "difficulty": "hard",
     "query": "按时间段统计每个国家的订单分布",
-    "sql": "SELECT country, SUM(CASE WHEN CAST(STRFTIME('%H', invoice_date) AS INTEGER) BETWEEN 0 AND 7 THEN 1 ELSE 0 END) as morning, SUM(CASE WHEN CAST(STRFTIME('%H', invoice_date) AS INTEGER) BETWEEN 8 AND 15 THEN 1 ELSE 0 END) as afternoon, SUM(CASE WHEN CAST(STRFTIME('%H', invoice_date) AS INTEGER) BETWEEN 16 AND 23 THEN 1 ELSE 0 END) as evening FROM orders GROUP BY country;",
-    "keywords": ["数据透视", "时间段", "订单分布"],
+    "sql": "SELECT ShipCountry, SUM(CASE WHEN CAST(STRFTIME('%H', OrderDate) AS INTEGER) BETWEEN 0 AND 7 THEN 1 ELSE 0 END) as morning, SUM(CASE WHEN CAST(STRFTIME('%H', OrderDate) AS INTEGER) BETWEEN 8 AND 15 THEN 1 ELSE 0 END) as afternoon, SUM(CASE WHEN CAST(STRFTIME('%H', OrderDate) AS INTEGER) BETWEEN 16 AND 23 THEN 1 ELSE 0 END) as evening FROM Orders GROUP BY ShipCountry;",
+    "keywords": [
+      "数据透视",
+      "时间段",
+      "订单分布"
+    ],
     "business_scenario": "订单时段分析"
   },
-
   {
     "id": 95,
     "category": "advanced_subquery",
     "difficulty": "hard",
     "query": "查询购买过所有畅销商品的客户",
-    "sql": "SELECT DISTINCT o.customer_id FROM orders o WHERE NOT EXISTS (SELECT stock_code FROM (SELECT stock_code FROM order_items GROUP BY stock_code ORDER BY SUM(quantity) DESC LIMIT 10) top_products WHERE NOT EXISTS (SELECT 1 FROM order_items oi2 JOIN orders o2 ON oi2.invoice_no = o2.invoice_no WHERE o2.customer_id = o.customer_id AND oi2.stock_code = top_products.stock_code));",
-    "keywords": ["EXISTS", "NOT EXISTS", "子查询", "全部购买"],
+    "sql": "SELECT DISTINCT o.CustomerID FROM Orders o WHERE NOT EXISTS (SELECT ProductID FROM (SELECT ProductID FROM \"Order Details\" GROUP BY ProductID ORDER BY SUM(Quantity) DESC LIMIT 10) top_products WHERE NOT EXISTS (SELECT 1 FROM \"Order Details\" oi2 JOIN Orders o2 ON oi2.OrderID = o2.OrderID WHERE o2.CustomerID = o.CustomerID AND oi2.ProductID = top_products.ProductID));",
+    "keywords": [
+      "EXISTS",
+      "NOT EXISTS",
+      "子查询",
+      "全部购买"
+    ],
     "business_scenario": "忠实客户识别"
   },
   {
@@ -716,8 +1182,12 @@
     "category": "advanced_subquery",
     "difficulty": "hard",
     "query": "查询从未购买过高价商品的客户",
-    "sql": "SELECT customer_id FROM orders WHERE customer_id NOT IN (SELECT DISTINCT o.customer_id FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE oi.unit_price > 10);",
-    "keywords": ["NOT IN", "子查询", "价格敏感"],
+    "sql": "SELECT CustomerID FROM Orders WHERE CustomerID NOT IN (SELECT DISTINCT o.CustomerID FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE oi.UnitPrice > 10);",
+    "keywords": [
+      "NOT IN",
+      "子查询",
+      "价格敏感"
+    ],
     "business_scenario": "价格敏感客户分析"
   },
   {
@@ -725,18 +1195,25 @@
     "category": "advanced_subquery",
     "difficulty": "hard",
     "query": "查询销售额超过所属国家平均水平的订单",
-    "sql": "WITH order_amounts AS (SELECT o.invoice_no, o.country, SUM(oi.quantity * oi.unit_price) as amount FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.invoice_no, o.country), country_avg AS (SELECT country, AVG(amount) as avg_amount FROM order_amounts GROUP BY country) SELECT oa.invoice_no, oa.country, oa.amount FROM order_amounts oa JOIN country_avg ca ON oa.country = ca.country WHERE oa.amount > ca.avg_amount;",
-    "keywords": ["相关子查询", "平均值", "超过平均"],
+    "sql": "WITH order_amounts AS (SELECT o.OrderID, o.ShipCountry, SUM(oi.Quantity * oi.UnitPrice) as amount FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.OrderID, o.ShipCountry), country_avg AS (SELECT ShipCountry, AVG(amount) as avg_amount FROM order_amounts GROUP BY ShipCountry) SELECT oa.OrderID, oa.ShipCountry, oa.amount FROM order_amounts oa JOIN country_avg ca ON oa.ShipCountry = ca.ShipCountry WHERE oa.amount > ca.avg_amount;",
+    "keywords": [
+      "相关子查询",
+      "平均值",
+      "超过平均"
+    ],
     "business_scenario": "异常订单识别"
   },
-
   {
     "id": 98,
     "category": "set_operation",
     "difficulty": "medium",
     "query": "查询既购买过商品A又购买过商品B的客户",
-    "sql": "SELECT DISTINCT customer_id FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE oi.stock_code = '85123A' INTERSECT SELECT DISTINCT customer_id FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE oi.stock_code = '71053';",
-    "keywords": ["INTERSECT", "交集", "同时购买"],
+    "sql": "SELECT DISTINCT CustomerID FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE oi.ProductID = '85123A' INTERSECT SELECT DISTINCT CustomerID FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE oi.ProductID = '71053';",
+    "keywords": [
+      "INTERSECT",
+      "交集",
+      "同时购买"
+    ],
     "business_scenario": "交叉销售分析"
   },
   {
@@ -744,8 +1221,12 @@
     "category": "set_operation",
     "difficulty": "medium",
     "query": "查询只在英国有订单但在其他国家没有订单的客户",
-    "sql": "SELECT DISTINCT customer_id FROM orders WHERE country = 'United Kingdom' EXCEPT SELECT DISTINCT customer_id FROM orders WHERE country != 'United Kingdom';",
-    "keywords": ["EXCEPT", "差集", "独有客户"],
+    "sql": "SELECT DISTINCT CustomerID FROM Orders WHERE ShipCountry = 'United Kingdom' EXCEPT SELECT DISTINCT CustomerID FROM Orders WHERE ShipCountry != 'United Kingdom';",
+    "keywords": [
+      "EXCEPT",
+      "差集",
+      "独有客户"
+    ],
     "business_scenario": "市场独占客户分析"
   },
   {
@@ -753,18 +1234,26 @@
     "category": "set_operation",
     "difficulty": "medium",
     "query": "合并2010年10月和11月的订单统计",
-    "sql": "SELECT '2010-10' as month, COUNT(*) as order_count, SUM(oi.quantity * oi.unit_price) as total_sales FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE STRFTIME('%Y-%m', o.invoice_date) = '2010-10' UNION ALL SELECT '2010-11' as month, COUNT(*) as order_count, SUM(oi.quantity * oi.unit_price) as total_sales FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE STRFTIME('%Y-%m', o.invoice_date) = '2010-11';",
-    "keywords": ["UNION ALL", "合并", "月度统计"],
+    "sql": "SELECT '2010-10' as month, COUNT(*) as order_count, SUM(oi.Quantity * oi.UnitPrice) as total_sales FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE STRFTIME('%Y-%m', o.OrderDate) = '2010-10' UNION ALL SELECT '2010-11' as month, COUNT(*) as order_count, SUM(oi.Quantity * oi.UnitPrice) as total_sales FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE STRFTIME('%Y-%m', o.OrderDate) = '2010-11';",
+    "keywords": [
+      "UNION ALL",
+      "合并",
+      "月度统计"
+    ],
     "business_scenario": "跨期对比分析"
   },
-
   {
     "id": 101,
     "category": "rfm_analysis",
     "difficulty": "expert",
     "query": "计算每个客户的RFM指标",
-    "sql": "WITH customer_rfm AS (SELECT o.customer_id, JULIANDAY('2011-12-31') - JULIANDAY(MAX(o.invoice_date)) as recency, COUNT(DISTINCT o.invoice_no) as frequency, SUM(oi.quantity * oi.unit_price) as monetary FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id) SELECT customer_id, recency, frequency, monetary, CASE WHEN recency <= 30 THEN 5 WHEN recency <= 60 THEN 4 WHEN recency <= 90 THEN 3 WHEN recency <= 180 THEN 2 ELSE 1 END as r_score, CASE WHEN frequency >= 20 THEN 5 WHEN frequency >= 10 THEN 4 WHEN frequency >= 5 THEN 3 WHEN frequency >= 2 THEN 2 ELSE 1 END as f_score, CASE WHEN monetary >= 5000 THEN 5 WHEN monetary >= 2000 THEN 4 WHEN monetary >= 1000 THEN 3 WHEN monetary >= 500 THEN 2 ELSE 1 END as m_score FROM customer_rfm;",
-    "keywords": ["RFM", "客户分群", "R-F-M", "打分"],
+    "sql": "WITH customer_rfm AS (SELECT o.CustomerID, JULIANDAY('2011-12-31') - JULIANDAY(MAX(o.OrderDate)) as recency, COUNT(DISTINCT o.OrderID) as frequency, SUM(oi.Quantity * oi.UnitPrice) as monetary FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID) SELECT CustomerID, recency, frequency, monetary, CASE WHEN recency <= 30 THEN 5 WHEN recency <= 60 THEN 4 WHEN recency <= 90 THEN 3 WHEN recency <= 180 THEN 2 ELSE 1 END as r_score, CASE WHEN frequency >= 20 THEN 5 WHEN frequency >= 10 THEN 4 WHEN frequency >= 5 THEN 3 WHEN frequency >= 2 THEN 2 ELSE 1 END as f_score, CASE WHEN monetary >= 5000 THEN 5 WHEN monetary >= 2000 THEN 4 WHEN monetary >= 1000 THEN 3 WHEN monetary >= 500 THEN 2 ELSE 1 END as m_score FROM customer_rfm;",
+    "keywords": [
+      "RFM",
+      "客户分群",
+      "R-F-M",
+      "打分"
+    ],
     "business_scenario": "客户价值分层"
   },
   {
@@ -772,8 +1261,12 @@
     "category": "retention_analysis",
     "difficulty": "expert",
     "query": "计算月度客户留存率",
-    "sql": "WITH first_purchase AS (SELECT customer_id, STRFTIME('%Y-%m', MIN(invoice_date)) as cohort_month FROM orders GROUP BY customer_id), monthly_activity AS (SELECT customer_id, STRFTIME('%Y-%m', invoice_date) as activity_month FROM orders GROUP BY customer_id, activity_month) SELECT fp.cohort_month, COUNT(DISTINCT fp.customer_id) as cohort_size, COUNT(DISTINCT CASE WHEN ma.activity_month = fp.cohort_month THEN fp.customer_id END) as month_0, COUNT(DISTINCT CASE WHEN CAST((JULIANDAY(ma.activity_month || '-01') - JULIANDAY(fp.cohort_month || '-01')) / 30 AS INTEGER) = 1 THEN fp.customer_id END) as month_1, COUNT(DISTINCT CASE WHEN CAST((JULIANDAY(ma.activity_month || '-01') - JULIANDAY(fp.cohort_month || '-01')) / 30 AS INTEGER) = 2 THEN fp.customer_id END) as month_2 FROM first_purchase fp LEFT JOIN monthly_activity ma ON fp.customer_id = ma.customer_id GROUP BY fp.cohort_month;",
-    "keywords": ["留存率", "同期群", "Cohort分析"],
+    "sql": "WITH first_purchase AS (SELECT CustomerID, STRFTIME('%Y-%m', MIN(OrderDate)) as cohort_month FROM Orders GROUP BY CustomerID), monthly_activity AS (SELECT CustomerID, STRFTIME('%Y-%m', OrderDate) as activity_month FROM Orders GROUP BY CustomerID, activity_month) SELECT fp.cohort_month, COUNT(DISTINCT fp.CustomerID) as cohort_size, COUNT(DISTINCT CASE WHEN ma.activity_month = fp.cohort_month THEN fp.CustomerID END) as month_0, COUNT(DISTINCT CASE WHEN CAST((JULIANDAY(ma.activity_month || '-01') - JULIANDAY(fp.cohort_month || '-01')) / 30 AS INTEGER) = 1 THEN fp.CustomerID END) as month_1, COUNT(DISTINCT CASE WHEN CAST((JULIANDAY(ma.activity_month || '-01') - JULIANDAY(fp.cohort_month || '-01')) / 30 AS INTEGER) = 2 THEN fp.CustomerID END) as month_2 FROM first_purchase fp LEFT JOIN monthly_activity ma ON fp.CustomerID = ma.CustomerID GROUP BY fp.cohort_month;",
+    "keywords": [
+      "留存率",
+      "同期群",
+      "Cohort分析"
+    ],
     "business_scenario": "用户留存分析"
   },
   {
@@ -781,8 +1274,12 @@
     "category": "time_series",
     "difficulty": "hard",
     "query": "计算每周订单量的周环比增长",
-    "sql": "WITH weekly_orders AS (SELECT STRFTIME('%Y-W%W', invoice_date) as week, COUNT(*) as order_count FROM orders GROUP BY week) SELECT week, order_count, LAG(order_count) OVER (ORDER BY week) as prev_week, ROUND((order_count - LAG(order_count) OVER (ORDER BY week)) * 100.0 / LAG(order_count) OVER (ORDER BY week), 2) as week_over_week_growth FROM weekly_orders;",
-    "keywords": ["周环比", "增长率", "时间序列"],
+    "sql": "WITH weekly_orders AS (SELECT STRFTIME('%Y-W%W', OrderDate) as week, COUNT(*) as order_count FROM Orders GROUP BY week) SELECT week, order_count, LAG(order_count) OVER (ORDER BY week) as prev_week, ROUND((order_count - LAG(order_count) OVER (ORDER BY week)) * 100.0 / LAG(order_count) OVER (ORDER BY week), 2) as week_over_week_growth FROM weekly_orders;",
+    "keywords": [
+      "周环比",
+      "增长率",
+      "时间序列"
+    ],
     "business_scenario": "周度业务监控"
   },
   {
@@ -790,8 +1287,12 @@
     "category": "time_series",
     "difficulty": "expert",
     "query": "计算每个商品的7天移动平均销量",
-    "sql": "WITH daily_product_sales AS (SELECT stock_code, STRFTIME('%Y-%m-%d', o.invoice_date) as sale_date, SUM(oi.quantity) as daily_quantity FROM order_items oi JOIN orders o ON oi.invoice_no = o.invoice_no GROUP BY stock_code, sale_date) SELECT stock_code, sale_date, daily_quantity, AVG(daily_quantity) OVER (PARTITION BY stock_code ORDER BY sale_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as ma_7_days FROM daily_product_sales;",
-    "keywords": ["移动平均", "时间序列", "趋势平滑"],
+    "sql": "WITH daily_product_sales AS (SELECT ProductID, STRFTIME('%Y-%m-%d', o.OrderDate) as sale_date, SUM(oi.Quantity) as daily_quantity FROM \"Order Details\" oi JOIN Orders o ON oi.OrderID = o.OrderID GROUP BY ProductID, sale_date) SELECT ProductID, sale_date, daily_quantity, AVG(daily_quantity) OVER (PARTITION BY ProductID ORDER BY sale_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as ma_7_days FROM daily_product_sales;",
+    "keywords": [
+      "移动平均",
+      "时间序列",
+      "趋势平滑"
+    ],
     "business_scenario": "销量趋势预测"
   },
   {
@@ -799,8 +1300,12 @@
     "category": "repurchase_rate",
     "difficulty": "hard",
     "query": "计算每个客户的复购率",
-    "sql": "WITH customer_orders AS (SELECT customer_id, COUNT(DISTINCT invoice_no) as total_orders FROM orders GROUP BY customer_id) SELECT CASE WHEN total_orders = 1 THEN '一次性客户' WHEN total_orders BETWEEN 2 AND 5 THEN '低频复购' WHEN total_orders BETWEEN 6 AND 10 THEN '中频复购' ELSE '高频复购' END as customer_type, COUNT(*) as customer_count, ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM customer_orders), 2) as percentage FROM customer_orders GROUP BY customer_type;",
-    "keywords": ["复购率", "客户分类", "购买频次"],
+    "sql": "WITH customer_orders AS (SELECT CustomerID, COUNT(DISTINCT OrderID) as total_orders FROM Orders GROUP BY CustomerID) SELECT CASE WHEN total_orders = 1 THEN '一次性客户' WHEN total_orders BETWEEN 2 AND 5 THEN '低频复购' WHEN total_orders BETWEEN 6 AND 10 THEN '中频复购' ELSE '高频复购' END as customer_type, COUNT(*) as customer_count, ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM customer_orders), 2) as percentage FROM customer_orders GROUP BY customer_type;",
+    "keywords": [
+      "复购率",
+      "客户分类",
+      "购买频次"
+    ],
     "business_scenario": "客户忠诚度分析"
   },
   {
@@ -808,8 +1313,12 @@
     "category": "basket_analysis",
     "difficulty": "expert",
     "query": "查找频繁一起购买的商品组合（支持度>5%）",
-    "sql": "WITH total_orders AS (SELECT COUNT(DISTINCT invoice_no) as total FROM order_items), product_pairs AS (SELECT oi1.stock_code as product_a, oi2.stock_code as product_b, COUNT(DISTINCT oi1.invoice_no) as pair_count FROM order_items oi1 JOIN order_items oi2 ON oi1.invoice_no = oi2.invoice_no AND oi1.stock_code < oi2.stock_code GROUP BY oi1.stock_code, oi2.stock_code) SELECT product_a, product_b, pair_count, ROUND(pair_count * 100.0 / (SELECT total FROM total_orders), 2) as support FROM product_pairs WHERE pair_count * 100.0 / (SELECT total FROM total_orders) > 5 ORDER BY support DESC;",
-    "keywords": ["购物篮分析", "关联规则", "支持度"],
+    "sql": "WITH total_orders AS (SELECT COUNT(DISTINCT OrderID) as total FROM \"Order Details\"), product_pairs AS (SELECT oi1.ProductID as product_a, oi2.ProductID as product_b, COUNT(DISTINCT oi1.OrderID) as pair_count FROM \"Order Details\" oi1 JOIN \"Order Details\" oi2 ON oi1.OrderID = oi2.OrderID AND oi1.ProductID < oi2.ProductID GROUP BY oi1.ProductID, oi2.ProductID) SELECT product_a, product_b, pair_count, ROUND(pair_count * 100.0 / (SELECT total FROM total_orders), 2) as support FROM product_pairs WHERE pair_count * 100.0 / (SELECT total FROM total_orders) > 5 ORDER BY support DESC;",
+    "keywords": [
+      "购物篮分析",
+      "关联规则",
+      "支持度"
+    ],
     "business_scenario": "商品捆绑销售策略"
   },
   {
@@ -817,8 +1326,12 @@
     "category": "customer_segmentation",
     "difficulty": "expert",
     "query": "基于消费行为的客户细分",
-    "sql": "WITH customer_behavior AS (SELECT o.customer_id, COUNT(DISTINCT o.invoice_no) as order_count, SUM(oi.quantity * oi.unit_price) as total_spent, AVG(oi.quantity * oi.unit_price) as avg_order_value, COUNT(DISTINCT oi.stock_code) as product_variety, JULIANDAY('2011-12-31') - JULIANDAY(MAX(o.invoice_date)) as days_since_last_order FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id) SELECT CASE WHEN days_since_last_order <= 30 AND total_spent > 5000 THEN 'VIP活跃客户' WHEN days_since_last_order <= 30 THEN '普通活跃客户' WHEN days_since_last_order <= 90 AND total_spent > 5000 THEN 'VIP沉睡客户' WHEN days_since_last_order <= 90 THEN '普通沉睡客户' ELSE '流失客户' END as segment, COUNT(*) as customer_count, AVG(total_spent) as avg_spent, AVG(order_count) as avg_orders FROM customer_behavior GROUP BY segment;",
-    "keywords": ["客户细分", "行为分析", "客户画像"],
+    "sql": "WITH customer_behavior AS (SELECT o.CustomerID, COUNT(DISTINCT o.OrderID) as order_count, SUM(oi.Quantity * oi.UnitPrice) as total_spent, AVG(oi.Quantity * oi.UnitPrice) as avg_order_value, COUNT(DISTINCT oi.ProductID) as product_variety, JULIANDAY('2011-12-31') - JULIANDAY(MAX(o.OrderDate)) as days_since_last_order FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID) SELECT CASE WHEN days_since_last_order <= 30 AND total_spent > 5000 THEN 'VIP活跃客户' WHEN days_since_last_order <= 30 THEN '普通活跃客户' WHEN days_since_last_order <= 90 AND total_spent > 5000 THEN 'VIP沉睡客户' WHEN days_since_last_order <= 90 THEN '普通沉睡客户' ELSE '流失客户' END as segment, COUNT(*) as customer_count, AVG(total_spent) as avg_spent, AVG(order_count) as avg_orders FROM customer_behavior GROUP BY segment;",
+    "keywords": [
+      "客户细分",
+      "行为分析",
+      "客户画像"
+    ],
     "business_scenario": "精准营销策略"
   },
   {
@@ -826,8 +1339,12 @@
     "category": "anomaly_detection",
     "difficulty": "hard",
     "query": "检测异常高额订单（超过3倍标准差）",
-    "sql": "WITH order_stats AS (SELECT AVG(order_total) as avg_total, (AVG(order_total * order_total) - AVG(order_total) * AVG(order_total)) as variance FROM (SELECT invoice_no, SUM(quantity * unit_price) as order_total FROM order_items GROUP BY invoice_no)), order_amounts AS (SELECT invoice_no, SUM(quantity * unit_price) as total FROM order_items GROUP BY invoice_no) SELECT oa.invoice_no, oa.total, os.avg_total, SQRT(os.variance) as std_dev FROM order_amounts oa, order_stats os WHERE oa.total > os.avg_total + 3 * SQRT(os.variance);",
-    "keywords": ["异常检测", "标准差", "离群值"],
+    "sql": "WITH order_stats AS (SELECT AVG(order_total) as avg_total, (AVG(order_total * order_total) - AVG(order_total) * AVG(order_total)) as variance FROM (SELECT OrderID, SUM(Quantity * UnitPrice) as order_total FROM \"Order Details\" GROUP BY OrderID)), order_amounts AS (SELECT OrderID, SUM(Quantity * UnitPrice) as total FROM \"Order Details\" GROUP BY OrderID) SELECT oa.OrderID, oa.total, os.avg_total, SQRT(os.variance) as std_dev FROM order_amounts oa, order_stats os WHERE oa.total > os.avg_total + 3 * SQRT(os.variance);",
+    "keywords": [
+      "异常检测",
+      "标准差",
+      "离群值"
+    ],
     "business_scenario": "风险订单识别"
   },
   {
@@ -835,8 +1352,12 @@
     "category": "product_lifecycle",
     "difficulty": "hard",
     "query": "分析商品的生命周期阶段",
-    "sql": "WITH product_monthly_sales AS (SELECT stock_code, STRFTIME('%Y-%m', o.invoice_date) as month, SUM(oi.quantity) as monthly_sales FROM order_items oi JOIN orders o ON oi.invoice_no = o.invoice_no GROUP BY stock_code, month), product_trends AS (SELECT stock_code, month, monthly_sales, LAG(monthly_sales, 1) OVER (PARTITION BY stock_code ORDER BY month) as prev_month_1, LAG(monthly_sales, 2) OVER (PARTITION BY stock_code ORDER BY month) as prev_month_2 FROM product_monthly_sales) SELECT stock_code, month, monthly_sales, CASE WHEN prev_month_1 IS NULL OR prev_month_2 IS NULL THEN '导入期' WHEN monthly_sales > prev_month_1 AND prev_month_1 > prev_month_2 THEN '成长期' WHEN monthly_sales >= prev_month_1 * 0.9 AND monthly_sales <= prev_month_1 * 1.1 THEN '成熟期' ELSE '衰退期' END as lifecycle_stage FROM product_trends WHERE prev_month_1 IS NOT NULL AND prev_month_2 IS NOT NULL;",
-    "keywords": ["产品生命周期", "趋势分析", "阶段判断"],
+    "sql": "WITH product_monthly_sales AS (SELECT ProductID, STRFTIME('%Y-%m', o.OrderDate) as month, SUM(oi.Quantity) as monthly_sales FROM \"Order Details\" oi JOIN Orders o ON oi.OrderID = o.OrderID GROUP BY ProductID, month), product_trends AS (SELECT ProductID, month, monthly_sales, LAG(monthly_sales, 1) OVER (PARTITION BY ProductID ORDER BY month) as prev_month_1, LAG(monthly_sales, 2) OVER (PARTITION BY ProductID ORDER BY month) as prev_month_2 FROM product_monthly_sales) SELECT ProductID, month, monthly_sales, CASE WHEN prev_month_1 IS NULL OR prev_month_2 IS NULL THEN '导入期' WHEN monthly_sales > prev_month_1 AND prev_month_1 > prev_month_2 THEN '成长期' WHEN monthly_sales >= prev_month_1 * 0.9 AND monthly_sales <= prev_month_1 * 1.1 THEN '成熟期' ELSE '衰退期' END as lifecycle_stage FROM product_trends WHERE prev_month_1 IS NOT NULL AND prev_month_2 IS NOT NULL;",
+    "keywords": [
+      "产品生命周期",
+      "趋势分析",
+      "阶段判断"
+    ],
     "business_scenario": "产品策略调整"
   },
   {
@@ -844,8 +1365,12 @@
     "category": "revenue_contribution",
     "difficulty": "hard",
     "query": "计算累计收入占比（帕累托分析）",
-    "sql": "WITH product_revenue AS (SELECT stock_code, SUM(quantity * unit_price) as revenue FROM order_items GROUP BY stock_code), ranked_products AS (SELECT stock_code, revenue, SUM(revenue) OVER (ORDER BY revenue DESC) as cumulative_revenue, SUM(revenue) OVER () as total_revenue FROM product_revenue) SELECT stock_code, revenue, ROUND(revenue * 100.0 / total_revenue, 2) as revenue_percentage, ROUND(cumulative_revenue * 100.0 / total_revenue, 2) as cumulative_percentage FROM ranked_products ORDER BY revenue DESC;",
-    "keywords": ["帕累托分析", "80/20法则", "累计占比"],
+    "sql": "WITH product_revenue AS (SELECT ProductID, SUM(Quantity * UnitPrice) as revenue FROM \"Order Details\" GROUP BY ProductID), ranked_products AS (SELECT ProductID, revenue, SUM(revenue) OVER (ORDER BY revenue DESC) as cumulative_revenue, SUM(revenue) OVER () as total_revenue FROM product_revenue) SELECT ProductID, revenue, ROUND(revenue * 100.0 / total_revenue, 2) as revenue_percentage, ROUND(cumulative_revenue * 100.0 / total_revenue, 2) as cumulative_percentage FROM ranked_products ORDER BY revenue DESC;",
+    "keywords": [
+      "帕累托分析",
+      "80/20法则",
+      "累计占比"
+    ],
     "business_scenario": "核心商品识别"
   },
   {
@@ -853,8 +1378,12 @@
     "category": "customer_lifetime_value",
     "difficulty": "expert",
     "query": "预测客户生命周期价值（CLV）",
-    "sql": "WITH customer_metrics AS (SELECT o.customer_id, COUNT(DISTINCT o.invoice_no) as purchase_count, SUM(oi.quantity * oi.unit_price) as total_revenue, (JULIANDAY(MAX(o.invoice_date)) - JULIANDAY(MIN(o.invoice_date))) / 365.0 as customer_lifespan_years, SUM(oi.quantity * oi.unit_price) / COUNT(DISTINCT o.invoice_no) as avg_order_value FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id HAVING customer_lifespan_years > 0) SELECT customer_id, purchase_count, total_revenue, ROUND(customer_lifespan_years, 2) as lifespan_years, ROUND(avg_order_value, 2) as avg_order_value, ROUND(purchase_count / customer_lifespan_years, 2) as purchase_frequency_per_year, ROUND((purchase_count / customer_lifespan_years) * avg_order_value * 3, 2) as predicted_clv_3years FROM customer_metrics WHERE purchase_count >= 2;",
-    "keywords": ["CLV", "生命周期价值", "预测模型"],
+    "sql": "WITH customer_metrics AS (SELECT o.CustomerID, COUNT(DISTINCT o.OrderID) as purchase_count, SUM(oi.Quantity * oi.UnitPrice) as total_revenue, (JULIANDAY(MAX(o.OrderDate)) - JULIANDAY(MIN(o.OrderDate))) / 365.0 as customer_lifespan_years, SUM(oi.Quantity * oi.UnitPrice) / COUNT(DISTINCT o.OrderID) as avg_order_value FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID HAVING customer_lifespan_years > 0) SELECT CustomerID, purchase_count, total_revenue, ROUND(customer_lifespan_years, 2) as lifespan_years, ROUND(avg_order_value, 2) as avg_order_value, ROUND(purchase_count / customer_lifespan_years, 2) as purchase_frequency_per_year, ROUND((purchase_count / customer_lifespan_years) * avg_order_value * 3, 2) as predicted_clv_3years FROM customer_metrics WHERE purchase_count >= 2;",
+    "keywords": [
+      "CLV",
+      "生命周期价值",
+      "预测模型"
+    ],
     "business_scenario": "客户价值预测"
   },
   {
@@ -862,8 +1391,12 @@
     "category": "market_basket",
     "difficulty": "expert",
     "query": "计算商品关联规则的置信度",
-    "sql": "WITH product_counts AS (SELECT stock_code, COUNT(DISTINCT invoice_no) as product_count FROM order_items GROUP BY stock_code), pair_counts AS (SELECT oi1.stock_code as product_a, oi2.stock_code as product_b, COUNT(DISTINCT oi1.invoice_no) as pair_count FROM order_items oi1 JOIN order_items oi2 ON oi1.invoice_no = oi2.invoice_no AND oi1.stock_code < oi2.stock_code GROUP BY oi1.stock_code, oi2.stock_code) SELECT pc.product_a, pc.product_b, pc.pair_count, pa.product_count as count_a, pb.product_count as count_b, ROUND(pc.pair_count * 100.0 / pa.product_count, 2) as confidence_a_to_b, ROUND(pc.pair_count * 100.0 / pb.product_count, 2) as confidence_b_to_a FROM pair_counts pc JOIN product_counts pa ON pc.product_a = pa.stock_code JOIN product_counts pb ON pc.product_b = pb.stock_code WHERE pc.pair_count >= 10 ORDER BY confidence_a_to_b DESC LIMIT 20;",
-    "keywords": ["关联规则", "置信度", "推荐算法"],
+    "sql": "WITH product_counts AS (SELECT ProductID, COUNT(DISTINCT OrderID) as product_count FROM \"Order Details\" GROUP BY ProductID), pair_counts AS (SELECT oi1.ProductID as product_a, oi2.ProductID as product_b, COUNT(DISTINCT oi1.OrderID) as pair_count FROM \"Order Details\" oi1 JOIN \"Order Details\" oi2 ON oi1.OrderID = oi2.OrderID AND oi1.ProductID < oi2.ProductID GROUP BY oi1.ProductID, oi2.ProductID) SELECT pc.product_a, pc.product_b, pc.pair_count, pa.product_count as count_a, pb.product_count as count_b, ROUND(pc.pair_count * 100.0 / pa.product_count, 2) as confidence_a_to_b, ROUND(pc.pair_count * 100.0 / pb.product_count, 2) as confidence_b_to_a FROM pair_counts pc JOIN product_counts pa ON pc.product_a = pa.ProductID JOIN product_counts pb ON pc.product_b = pb.ProductID WHERE pc.pair_count >= 10 ORDER BY confidence_a_to_b DESC LIMIT 20;",
+    "keywords": [
+      "关联规则",
+      "置信度",
+      "推荐算法"
+    ],
     "business_scenario": "智能推荐系统"
   },
   {
@@ -871,8 +1404,12 @@
     "category": "seasonal_analysis",
     "difficulty": "hard",
     "query": "分析每个月的季节性销售模式",
-    "sql": "WITH monthly_sales AS (SELECT CAST(STRFTIME('%m', o.invoice_date) AS INTEGER) as month, SUM(oi.quantity * oi.unit_price) as sales FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY month), avg_monthly_sales AS (SELECT AVG(sales) as avg_sales FROM monthly_sales) SELECT ms.month, ms.sales, ams.avg_sales, ROUND((ms.sales - ams.avg_sales) * 100.0 / ams.avg_sales, 2) as deviation_percentage, CASE WHEN ms.sales > ams.avg_sales * 1.2 THEN '旺季' WHEN ms.sales < ams.avg_sales * 0.8 THEN '淡季' ELSE '平季' END as season_type FROM monthly_sales ms, avg_monthly_sales ams ORDER BY ms.month;",
-    "keywords": ["季节性", "月度模式", "旺季淡季"],
+    "sql": "WITH monthly_sales AS (SELECT CAST(STRFTIME('%m', o.OrderDate) AS INTEGER) as month, SUM(oi.Quantity * oi.UnitPrice) as sales FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY month), avg_monthly_sales AS (SELECT AVG(sales) as avg_sales FROM monthly_sales) SELECT ms.month, ms.sales, ams.avg_sales, ROUND((ms.sales - ams.avg_sales) * 100.0 / ams.avg_sales, 2) as deviation_percentage, CASE WHEN ms.sales > ams.avg_sales * 1.2 THEN '旺季' WHEN ms.sales < ams.avg_sales * 0.8 THEN '淡季' ELSE '平季' END as season_type FROM monthly_sales ms, avg_monthly_sales ams ORDER BY ms.month;",
+    "keywords": [
+      "季节性",
+      "月度模式",
+      "旺季淡季"
+    ],
     "business_scenario": "库存和营销规划"
   },
   {
@@ -880,8 +1417,12 @@
     "category": "geographic_analysis",
     "difficulty": "hard",
     "query": "分析不同国家的客户价值分布",
-    "sql": "WITH customer_value AS (SELECT o.customer_id, o.country, SUM(oi.quantity * oi.unit_price) as total_spent FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id, o.country), country_stats AS (SELECT country, COUNT(*) as customer_count, AVG(total_spent) as avg_customer_value, MIN(total_spent) as min_value, MAX(total_spent) as max_value, SUM(total_spent) as total_revenue FROM customer_value GROUP BY country) SELECT country, customer_count, ROUND(avg_customer_value, 2) as avg_value, ROUND(min_value, 2) as min_value, ROUND(max_value, 2) as max_value, ROUND(total_revenue, 2) as total_revenue, ROUND(total_revenue / (SELECT SUM(total_revenue) FROM country_stats) * 100, 2) as revenue_share FROM country_stats ORDER BY total_revenue DESC;",
-    "keywords": ["地理分析", "国家对比", "市场价值"],
+    "sql": "WITH customer_value AS (SELECT o.CustomerID, o.ShipCountry, SUM(oi.Quantity * oi.UnitPrice) as total_spent FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID, o.ShipCountry), country_stats AS (SELECT ShipCountry, COUNT(*) as customer_count, AVG(total_spent) as avg_customer_value, MIN(total_spent) as min_value, MAX(total_spent) as max_value, SUM(total_spent) as total_revenue FROM customer_value GROUP BY ShipCountry) SELECT ShipCountry, customer_count, ROUND(avg_customer_value, 2) as avg_value, ROUND(min_value, 2) as min_value, ROUND(max_value, 2) as max_value, ROUND(total_revenue, 2) as total_revenue, ROUND(total_revenue / (SELECT SUM(total_revenue) FROM country_stats) * 100, 2) as revenue_share FROM country_stats ORDER BY total_revenue DESC;",
+    "keywords": [
+      "地理分析",
+      "国家对比",
+      "市场价值"
+    ],
     "business_scenario": "市场优先级排序"
   },
   {
@@ -889,8 +1430,12 @@
     "category": "pricing_analysis",
     "difficulty": "hard",
     "query": "分析价格弹性（不同价格段的销量）",
-    "sql": "WITH price_bands AS (SELECT CASE WHEN unit_price < 1 THEN '0-1' WHEN unit_price < 5 THEN '1-5' WHEN unit_price < 10 THEN '5-10' WHEN unit_price < 20 THEN '10-20' ELSE '20+' END as price_range, stock_code, AVG(unit_price) as avg_price, SUM(quantity) as total_quantity FROM order_items GROUP BY price_range, stock_code) SELECT price_range, COUNT(DISTINCT stock_code) as product_count, ROUND(AVG(avg_price), 2) as avg_price_in_range, SUM(total_quantity) as total_sales_volume, ROUND(SUM(total_quantity) / COUNT(DISTINCT stock_code), 2) as avg_sales_per_product FROM price_bands GROUP BY price_range ORDER BY avg_price_in_range;",
-    "keywords": ["价格分析", "价格弹性", "销量分布"],
+    "sql": "WITH price_bands AS (SELECT CASE WHEN UnitPrice < 1 THEN '0-1' WHEN UnitPrice < 5 THEN '1-5' WHEN UnitPrice < 10 THEN '5-10' WHEN UnitPrice < 20 THEN '10-20' ELSE '20+' END as price_range, ProductID, AVG(UnitPrice) as avg_price, SUM(Quantity) as total_quantity FROM \"Order Details\" GROUP BY price_range, ProductID) SELECT price_range, COUNT(DISTINCT ProductID) as product_count, ROUND(AVG(avg_price), 2) as avg_price_in_range, SUM(total_quantity) as total_sales_volume, ROUND(SUM(total_quantity) / COUNT(DISTINCT ProductID), 2) as avg_sales_per_product FROM price_bands GROUP BY price_range ORDER BY avg_price_in_range;",
+    "keywords": [
+      "价格分析",
+      "价格弹性",
+      "销量分布"
+    ],
     "business_scenario": "定价策略优化"
   },
   {
@@ -898,8 +1443,12 @@
     "category": "cross_sell_analysis",
     "difficulty": "expert",
     "query": "识别交叉销售机会（买了A未买B的客户）",
-    "sql": "WITH product_a_buyers AS (SELECT DISTINCT o.customer_id FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE oi.stock_code = '85123A'), product_b_buyers AS (SELECT DISTINCT o.customer_id FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no WHERE oi.stock_code = '71053'), cross_sell_opportunity AS (SELECT customer_id FROM product_a_buyers WHERE customer_id NOT IN (SELECT customer_id FROM product_b_buyers)) SELECT COUNT(*) as opportunity_count, ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM product_a_buyers), 2) as penetration_rate FROM cross_sell_opportunity;",
-    "keywords": ["交叉销售", "销售机会", "渗透率"],
+    "sql": "WITH product_a_buyers AS (SELECT DISTINCT o.CustomerID FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE oi.ProductID = '85123A'), product_b_buyers AS (SELECT DISTINCT o.CustomerID FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID WHERE oi.ProductID = '71053'), cross_sell_opportunity AS (SELECT CustomerID FROM product_a_buyers WHERE CustomerID NOT IN (SELECT CustomerID FROM product_b_buyers)) SELECT COUNT(*) as opportunity_count, ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM product_a_buyers), 2) as penetration_rate FROM cross_sell_opportunity;",
+    "keywords": [
+      "交叉销售",
+      "销售机会",
+      "渗透率"
+    ],
     "business_scenario": "营销活动设计"
   },
   {
@@ -907,8 +1456,12 @@
     "category": "inventory_turnover",
     "difficulty": "hard",
     "query": "计算商品库存周转率",
-    "sql": "WITH product_sales AS (SELECT stock_code, COUNT(DISTINCT STRFTIME('%Y-%m-%d', o.invoice_date)) as sales_days, SUM(oi.quantity) as total_sold FROM order_items oi JOIN orders o ON oi.invoice_no = o.invoice_no GROUP BY stock_code) SELECT stock_code, total_sold, sales_days, ROUND(total_sold * 1.0 / sales_days, 2) as daily_sales_rate, CASE WHEN total_sold * 1.0 / sales_days > 10 THEN '快速周转' WHEN total_sold * 1.0 / sales_days > 5 THEN '正常周转' ELSE '滞销' END as turnover_status FROM product_sales WHERE sales_days > 0 ORDER BY daily_sales_rate DESC;",
-    "keywords": ["库存周转", "动销率", "滞销品"],
+    "sql": "WITH product_sales AS (SELECT ProductID, COUNT(DISTINCT STRFTIME('%Y-%m-%d', o.OrderDate)) as sales_days, SUM(oi.Quantity) as total_sold FROM \"Order Details\" oi JOIN Orders o ON oi.OrderID = o.OrderID GROUP BY ProductID) SELECT ProductID, total_sold, sales_days, ROUND(total_sold * 1.0 / sales_days, 2) as daily_sales_rate, CASE WHEN total_sold * 1.0 / sales_days > 10 THEN '快速周转' WHEN total_sold * 1.0 / sales_days > 5 THEN '正常周转' ELSE '滞销' END as turnover_status FROM product_sales WHERE sales_days > 0 ORDER BY daily_sales_rate DESC;",
+    "keywords": [
+      "库存周转",
+      "动销率",
+      "滞销品"
+    ],
     "business_scenario": "库存管理优化"
   },
   {
@@ -916,8 +1469,12 @@
     "category": "customer_acquisition",
     "difficulty": "hard",
     "query": "分析新客户获客渠道效果（按国家）",
-    "sql": "WITH first_orders AS (SELECT customer_id, country, MIN(invoice_date) as first_order_date FROM orders GROUP BY customer_id), monthly_new_customers AS (SELECT country, STRFTIME('%Y-%m', first_order_date) as acquisition_month, COUNT(*) as new_customers FROM first_orders GROUP BY country, acquisition_month) SELECT country, acquisition_month, new_customers, SUM(new_customers) OVER (PARTITION BY country ORDER BY acquisition_month) as cumulative_customers FROM monthly_new_customers ORDER BY country, acquisition_month;",
-    "keywords": ["获客分析", "新客户", "渠道效果"],
+    "sql": "WITH first_orders AS (SELECT CustomerID, ShipCountry, MIN(OrderDate) as first_order_date FROM Orders GROUP BY CustomerID), monthly_new_customers AS (SELECT ShipCountry, STRFTIME('%Y-%m', first_order_date) as acquisition_month, COUNT(*) as new_customers FROM first_orders GROUP BY ShipCountry, acquisition_month) SELECT ShipCountry, acquisition_month, new_customers, SUM(new_customers) OVER (PARTITION BY ShipCountry ORDER BY acquisition_month) as cumulative_customers FROM monthly_new_customers ORDER BY ShipCountry, acquisition_month;",
+    "keywords": [
+      "获客分析",
+      "新客户",
+      "渠道效果"
+    ],
     "business_scenario": "市场投入评估"
   },
   {
@@ -925,8 +1482,12 @@
     "category": "revenue_forecast",
     "difficulty": "expert",
     "query": "基于历史趋势预测下月收入",
-    "sql": "WITH monthly_revenue AS (SELECT STRFTIME('%Y-%m', o.invoice_date) as month, SUM(oi.quantity * oi.unit_price) as revenue FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY month), revenue_growth AS (SELECT month, revenue, LAG(revenue, 1) OVER (ORDER BY month) as prev_month_revenue, LAG(revenue, 2) OVER (ORDER BY month) as prev_2month_revenue, LAG(revenue, 3) OVER (ORDER BY month) as prev_3month_revenue FROM monthly_revenue) SELECT month, revenue, ROUND((revenue + prev_month_revenue + prev_2month_revenue) / 3, 2) as ma_3months, ROUND((revenue - prev_month_revenue) * 100.0 / prev_month_revenue, 2) as mom_growth, ROUND(revenue * (1 + (revenue - prev_month_revenue) / prev_month_revenue), 2) as next_month_forecast FROM revenue_growth WHERE prev_3month_revenue IS NOT NULL ORDER BY month DESC LIMIT 1;",
-    "keywords": ["收入预测", "趋势分析", "移动平均"],
+    "sql": "WITH monthly_revenue AS (SELECT STRFTIME('%Y-%m', o.OrderDate) as month, SUM(oi.Quantity * oi.UnitPrice) as revenue FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY month), revenue_growth AS (SELECT month, revenue, LAG(revenue, 1) OVER (ORDER BY month) as prev_month_revenue, LAG(revenue, 2) OVER (ORDER BY month) as prev_2month_revenue, LAG(revenue, 3) OVER (ORDER BY month) as prev_3month_revenue FROM monthly_revenue) SELECT month, revenue, ROUND((revenue + prev_month_revenue + prev_2month_revenue) / 3, 2) as ma_3months, ROUND((revenue - prev_month_revenue) * 100.0 / prev_month_revenue, 2) as mom_growth, ROUND(revenue * (1 + (revenue - prev_month_revenue) / prev_month_revenue), 2) as next_month_forecast FROM revenue_growth WHERE prev_3month_revenue IS NOT NULL ORDER BY month DESC LIMIT 1;",
+    "keywords": [
+      "收入预测",
+      "趋势分析",
+      "移动平均"
+    ],
     "business_scenario": "财务规划"
   },
   {
@@ -934,8 +1495,13 @@
     "category": "advanced_analytics",
     "difficulty": "expert",
     "query": "综合分析：高价值客户的购买模式",
-    "sql": "WITH high_value_customers AS (SELECT o.customer_id, SUM(oi.quantity * oi.unit_price) as total_spent FROM orders o JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY o.customer_id ORDER BY total_spent DESC LIMIT 100), customer_patterns AS (SELECT hvc.customer_id, o.country, COUNT(DISTINCT o.invoice_no) as order_frequency, AVG(oi.quantity * oi.unit_price) as avg_order_value, COUNT(DISTINCT oi.stock_code) as product_variety, STRFTIME('%w', o.invoice_date) as day_of_week, CAST(STRFTIME('%H', o.invoice_date) AS INTEGER) as hour_of_day FROM high_value_customers hvc JOIN orders o ON hvc.customer_id = o.customer_id JOIN order_items oi ON o.invoice_no = oi.invoice_no GROUP BY hvc.customer_id, o.country, day_of_week, hour_of_day) SELECT country, ROUND(AVG(order_frequency), 2) as avg_orders, ROUND(AVG(avg_order_value), 2) as avg_basket_size, ROUND(AVG(product_variety), 2) as avg_product_variety, day_of_week, hour_of_day, COUNT(*) as pattern_frequency FROM customer_patterns GROUP BY country, day_of_week, hour_of_day HAVING pattern_frequency > 5 ORDER BY country, pattern_frequency DESC;",
-    "keywords": ["综合分析", "购买模式", "高价值客户", "行为洞察"],
+    "sql": "WITH high_value_customers AS (SELECT o.CustomerID, SUM(oi.Quantity * oi.UnitPrice) as total_spent FROM Orders o JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY o.CustomerID ORDER BY total_spent DESC LIMIT 100), customer_patterns AS (SELECT hvc.CustomerID, o.ShipCountry, COUNT(DISTINCT o.OrderID) as order_frequency, AVG(oi.Quantity * oi.UnitPrice) as avg_order_value, COUNT(DISTINCT oi.ProductID) as product_variety, STRFTIME('%w', o.OrderDate) as day_of_week, CAST(STRFTIME('%H', o.OrderDate) AS INTEGER) as hour_of_day FROM high_value_customers hvc JOIN Orders o ON hvc.CustomerID = o.CustomerID JOIN \"Order Details\" oi ON o.OrderID = oi.OrderID GROUP BY hvc.CustomerID, o.ShipCountry, day_of_week, hour_of_day) SELECT ShipCountry, ROUND(AVG(order_frequency), 2) as avg_orders, ROUND(AVG(avg_order_value), 2) as avg_basket_size, ROUND(AVG(product_variety), 2) as avg_product_variety, day_of_week, hour_of_day, COUNT(*) as pattern_frequency FROM customer_patterns GROUP BY ShipCountry, day_of_week, hour_of_day HAVING pattern_frequency > 5 ORDER BY ShipCountry, pattern_frequency DESC;",
+    "keywords": [
+      "综合分析",
+      "购买模式",
+      "高价值客户",
+      "行为洞察"
+    ],
     "business_scenario": "VIP客户运营策略"
   }
 ]

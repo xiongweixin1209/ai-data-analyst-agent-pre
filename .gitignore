@@ -19,4 +19,4 @@ dist/
 *.sqlite
 
 # 日志
-*.log
+*.logdata/*.bak*

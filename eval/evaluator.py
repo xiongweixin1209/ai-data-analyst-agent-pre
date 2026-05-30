@@ -443,6 +443,12 @@ def run_mode(mode: str, test_cases: List[Dict], service, schema: List[Dict]) -> 
 
 
 def main() -> None:
+    # Windows GBK 终端会撞 UnicodeEncodeError(emoji 输出),强制 UTF-8
+    import io as _io
+    if sys.platform == "win32":
+        sys.stdout = _io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+        sys.stderr = _io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+
     parser = argparse.ArgumentParser(description="Text-to-SQL 评估脚本")
     parser.add_argument(
         "--mode",

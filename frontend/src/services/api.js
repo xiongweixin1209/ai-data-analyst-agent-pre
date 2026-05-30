@@ -293,20 +293,33 @@ export const datasourceAPI = {
 };
 
 /**
- * 示例数据源Schema（用于测试）
+ * 示例数据源 Schema(开发参考用,不被任何组件 import)
+ *
+ * 注:命名风格刻意采用 PascalCase(Northwind 风格),原因有二:
+ *  1. 跟项目主要 eval 目标 Northwind 数据集对齐
+ *  2. 防止"示例 schema 污染" —— 历史上这里曾用 snake_case
+ *     (invoice_no/stock_code 等),即便不被 import,也不应在仓库里
+ *     留下错误命名约定作为"参考"。
  */
 export const demoSchema = [
   {
-    table_name: 'orders',
+    table_name: 'Orders',
     columns: [
-      { name: 'invoice_no', type: 'TEXT' },
-      { name: 'stock_code', type: 'TEXT' },
-      { name: 'description', type: 'TEXT' },
-      { name: 'quantity', type: 'INTEGER' },
-      { name: 'invoice_date', type: 'TEXT' },
-      { name: 'unit_price', type: 'REAL' },
-      { name: 'customer_id', type: 'TEXT' },
-      { name: 'country', type: 'TEXT' },
+      { name: 'OrderID',     type: 'INTEGER' },
+      { name: 'CustomerID',  type: 'TEXT' },
+      { name: 'OrderDate',   type: 'TEXT' },
+      { name: 'ShipCountry', type: 'TEXT' },
+      { name: 'Freight',     type: 'REAL' },
+    ],
+  },
+  {
+    table_name: 'Customers',
+    columns: [
+      { name: 'CustomerID',  type: 'TEXT' },
+      { name: 'CompanyName', type: 'TEXT' },
+      { name: 'ContactName', type: 'TEXT' },
+      { name: 'Country',     type: 'TEXT' },
+      { name: 'City',        type: 'TEXT' },
     ],
   },
 ];

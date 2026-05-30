@@ -34,8 +34,16 @@ class Settings(BaseSettings):
     # 数据源自动扫描的外部目录
     # 启动时 datasource_manager 会扫描 backend/../data/ + 这里配置的每个目录,
     # 把发现的 .db / .sqlite 文件自动注册成数据源(已注册则跳过)。
-    # 用于 Plan C 等外部数据仓库对接:配上数据仓库路径,文件落进去就自动可见。
-    EXTERNAL_DATA_DIRS: List[str] = []
+    #
+    # 默认值指向跟 text-to-sql 同级的 data-warehouse/pharma 目录,这是跟
+    # 上游 drug-data-pipeline 项目的"数据契约"位置 —— pipeline 把清洗后的
+    # 药品销售数据集发布到这里,TTS 启动自动扫描并注册成数据源。
+    # 这是 publish-consume 模式,两个项目代码层零耦合,只通过文件交换衔接。
+    #
+    # 可用 EXTERNAL_DATA_DIRS 环境变量覆盖(逗号分隔多个路径)。
+    EXTERNAL_DATA_DIRS: List[str] = [
+        str(Path(__file__).parent.parent.parent / "data-warehouse" / "pharma"),
+    ]
 
     # SQL配置
     SQL_TIMEOUT: int = 30  # SQL执行超时（秒）
