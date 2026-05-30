@@ -2,8 +2,14 @@
 应用配置管理
 """
 
+from typing import List
 from pydantic_settings import BaseSettings
 from pathlib import Path
+
+# 注:应用元数据库(datasources / query_cache / field_comments)的位置
+# 由 database.py 直接定位到 backend/data/app.db,无需在此重复声明。
+# 之前 config.py 里的 DATABASE_URL 字段实际从未被任何代码引用,已删除。
+
 
 class Settings(BaseSettings):
     """应用配置"""
@@ -13,9 +19,6 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = True
     API_PORT: int = 8000
-
-    # 数据库配置
-    DATABASE_URL: str = "sqlite:///./data/app.db"
 
     # Ollama配置
     OLLAMA_BASE_URL: str = "http://localhost:11434"
@@ -27,6 +30,12 @@ class Settings(BaseSettings):
 
     # Few-shot示例路径
     FEW_SHOT_PATH: str = str(Path(__file__).parent.parent / "data" / "few_shot_examples.json")
+
+    # 数据源自动扫描的外部目录
+    # 启动时 datasource_manager 会扫描 backend/../data/ + 这里配置的每个目录,
+    # 把发现的 .db / .sqlite 文件自动注册成数据源(已注册则跳过)。
+    # 用于 Plan C 等外部数据仓库对接:配上数据仓库路径,文件落进去就自动可见。
+    EXTERNAL_DATA_DIRS: List[str] = []
 
     # SQL配置
     SQL_TIMEOUT: int = 30  # SQL执行超时（秒）

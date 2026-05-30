@@ -33,7 +33,7 @@ class DataSourceCreate(BaseModel):
             "example": {
                 "name": "Demo电商数据库",
                 "type": "sqlite",
-                "file_path": "D:/text-to-sql/data/demo_ecommerce.db",
+                "file_path": "data/demo_ecommerce.db",
                 "is_default": True
             }
         }

@@ -392,11 +392,16 @@ def get_analyzer(db_path: str) -> QueryPerformanceAnalyzer:
 # 测试代码
 # ============================================================
 if __name__ == "__main__":
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from config import settings
+
     print("=" * 60)
     print("测试查询性能分析器（综合优化版）")
     print("=" * 60)
 
-    db_path = "../data/demo_ecommerce.db"
+    db_path = settings.DEMO_DB_PATH
 
     try:
         analyzer = get_analyzer(db_path)

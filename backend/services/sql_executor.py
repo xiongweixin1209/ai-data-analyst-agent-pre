@@ -306,12 +306,17 @@ def get_executor(db_path: str) -> SQLExecutor:
 # 测试代码
 # ============================================================
 if __name__ == "__main__":
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from config import settings
+
     print("=" * 60)
     print("测试SQL执行器")
     print("=" * 60)
 
-    # 使用demo数据库
-    db_path = "/data/demo_ecommerce.db"
+    # 使用 demo 数据库(路径从配置读,避免硬编码)
+    db_path = settings.DEMO_DB_PATH
 
     try:
         executor = get_executor(db_path)
