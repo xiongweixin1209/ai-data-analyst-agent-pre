@@ -392,14 +392,26 @@ async def plan_analysis(request: dict):
     if not business_question:
         return {"success": False, "error": "请输入业务问题"}
 
-    # 获取数据表上下文 —— 拿表名 + 字段名(给 lookup_schema 步骤参考)
+    # Solution A:给 /plan 完整 schema 视野(表名 + 所有字段)
+    # 之前只给表名,导致 LLM 臆想字段(如"客户 demographics"实际不存在)。
+    # 现在让 LLM 看到真实字段后,规划只能 ground 在真实数据维度上。
     schema_context = ""
     if datasource_id:
         schema = datasource_manager.get_schema(str(datasource_id))
         if schema.get("success"):
             tables = schema.get("tables", [])
-            table_names = [t["table_name"] for t in tables]
-            schema_context = f"\n可用数据表:{', '.join(table_names)}"
+            lines = ["可用数据表及字段(规划步骤时只能引用以下真实字段,不要编造):"]
+            for t in tables:
+                tname = t.get("table_name", "")
+                cols = t.get("columns", [])
+                col_names = [c.get("name", "") for c in cols if c.get("name")]
+                # 字段过多时截断,避免 prompt 爆长
+                if len(col_names) > 20:
+                    col_str = ", ".join(col_names[:20]) + f", ...(共 {len(col_names)} 字段)"
+                else:
+                    col_str = ", ".join(col_names)
+                lines.append(f"- {tname}: {col_str}")
+            schema_context = "\n".join(lines)
 
     prompt = f"""你是一位资深数据分析师,正在帮用户用 Manual-step Agent 拆解业务问题。
 {schema_context}
@@ -456,6 +468,20 @@ async def plan_analysis(request: dict):
 - 中间步骤多用 execute_sql 拿数据
 - 最后一步用 interpret_results 给业务结论(可选)
 - tool 字段必须是 4 个工具名之一,**不能编造**
+
+【⚠️ 字段 grounded 硬约束 —— 必须遵守】
+- 上面"可用数据表及字段"列出了真实 schema。你的每一步 input 描述
+  必须 ground 在这些真实字段上。
+- **绝对不要**编造数据库里没有的概念。常见反例:
+  - ❌ "分析客户 demographics" (Customers 表里没有 demographics 字段)
+  - ❌ "查询客户类型分布" (没有 CustomerType 字段)
+  - ❌ "找出 VIP 客户" (没有 vip_flag 字段)
+- 正确做法:用真实存在的维度代替。例如:
+  - ✓ "按 Country 分组统计客户数量"(Customers 表有 Country)
+  - ✓ "按 ContactTitle 分组看客户职位分布"(有 ContactTitle)
+  - ✓ "用累计消费金额识别高价值客户"(通过聚合 Orders + Order Details 算)
+- 如果业务问题涉及到的维度真的没数据,**省略这一步**或换成有数据的维度,
+  不要硬凑。
 """
 
     result = text2sql_service.llm.generate(prompt=prompt, temperature=0.2, max_tokens=1200)

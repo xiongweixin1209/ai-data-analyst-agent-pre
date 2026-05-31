@@ -114,7 +114,9 @@ const QueryPlanner = ({ onSelectQuery, datasourceId }) => {
           result = await runExecuteSql(step.input);
           break;
         case 'interpret_results':
-          result = await runInterpretResults(step.input);
+          // 关键改动:把当前步骤号传进去,让 interpret 能复用前面已经
+          // 跑好的数据(而不是重新生成一条 SQL 然后臆想字段)
+          result = await runInterpretResults(step.input, stepNum);
           break;
         default:
           throw new Error(`未知工具:${step.tool}`);
@@ -194,38 +196,76 @@ const QueryPlanner = ({ onSelectQuery, datasourceId }) => {
     };
   };
 
-  const runInterpretResults = async (query) => {
-    // interpret 需要先有数据。这里先执行 SQL,再调 /interpret
-    // datasourceSchema 来自 /datasource/{id}/schema(enhanced 端点),
-    // 字段叫 table_details(不是 tables)。这里防御性兼容两种字段名。
-    const schemaList = datasourceSchema?.table_details
-                     || datasourceSchema?.tables
-                     || [];
-    const execResp = await text2sqlAPI.execute({
-      query,
-      schema: schemaList,
-      datasourceId,
-      includeOptimization: false,
-    });
-    if (!execResp.success) {
-      throw new Error(`SQL 执行失败:${execResp.error}`);
+  const runInterpretResults = async (query, currentStepNum) => {
+    // 关键设计:interpret_results 的语义是"解读前面查到的数据",
+    // 不是"重新跑 SQL"。所以优先复用前面最近的一个有数据的步骤,
+    // 避免 LLM 看到 "分析上述结果" 这种没有 SQL 指向的输入,自己
+    // 臆想字段(那就是之前 o.Total / d.CustomerTypeID 报错的根因)。
+    //
+    // 兜底:如果前面没有数据(用户跳过了 execute_sql),才回退到
+    // "自己跑一次 SQL"的老逻辑作为安全网。
+
+    // 1. 在前面步骤里找最近的有数据的(execute_sql 或自己跑过 SQL 的)
+    let upstreamData = null;
+    let reusedFromStep = null;
+    if (typeof currentStepNum === 'number') {
+      for (let i = currentStepNum - 1; i >= 1; i--) {
+        const prevState = stepStates[i];
+        const prevResult = prevState?.result;
+        if (prevResult?.data?.length > 0 && prevResult?.columns?.length > 0) {
+          upstreamData = prevResult;
+          reusedFromStep = i;
+          break;
+        }
+      }
     }
-    // 调 /interpret 端点(走 fetch,因为 api.js 里没封装这个端点)
+
+    let columns, data, sql;
+    if (upstreamData) {
+      // 复用前一步的数据,不重跑 SQL
+      columns = upstreamData.columns;
+      data    = upstreamData.data;
+      sql     = upstreamData.sql;
+    } else {
+      // 兜底:自己跑一次。带 datasourceId 让后端自动加载 schema。
+      const schemaList = datasourceSchema?.table_details
+                       || datasourceSchema?.tables
+                       || [];
+      const execResp = await text2sqlAPI.execute({
+        query,
+        schema: schemaList,
+        datasourceId,
+        includeOptimization: false,
+      });
+      if (!execResp.success) {
+        throw new Error(
+          `前面步骤还没出数据,interpret_results 试图自己跑 SQL 但失败了:${execResp.error}。`
+          + ` 建议:先点击前面 execute_sql 步骤的"执行",有数据后再点这一步`
+        );
+      }
+      columns = execResp.columns;
+      data    = execResp.data;
+      sql     = execResp.sql;
+    }
+
+    // 2. 调 /interpret 端点,把数据翻译成业务洞察文字
     const interpResp = await fetch('http://localhost:8000/api/text2sql/interpret', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         user_query: query,
-        columns: execResp.columns,
-        data: execResp.data,
+        columns,
+        data,
       }),
     }).then(r => r.json());
+
     return {
       type: 'interpretation',
-      sql: execResp.sql,
-      data: execResp.data,
-      columns: execResp.columns,
+      sql,
+      data,
+      columns,
       interpretation: interpResp.interpretation || '(未能生成解读)',
+      reused_from_step: reusedFromStep,  // null = 自己跑的;数字 = 复用了第 N 步
     };
   };
 
@@ -482,6 +522,11 @@ const InterpretationView = ({ result }) => (
     <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-2">
       <Lightbulb className="w-3 h-3 text-orange-500" />
       AI 业务解读
+      {result.reused_from_step != null && (
+        <span className="ml-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-100 text-blue-700 border border-blue-200">
+          复用第 {result.reused_from_step} 步数据
+        </span>
+      )}
     </p>
     <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-sm text-gray-800 leading-relaxed">
       {result.interpretation}
