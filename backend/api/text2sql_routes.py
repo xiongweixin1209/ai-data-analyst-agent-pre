@@ -65,15 +65,35 @@ def convert_schema_to_dict(schema_list):
 # 生成 SQL
 # ------------------------------------------------------------------ #
 
+def _resolve_schema(
+    table_schema_param,
+    datasource_id_str: Optional[str],
+) -> list:
+    """统一的 schema 解析:
+    1) 优先用请求里显式传的 table_schema(转 dict)
+    2) 空时若有 datasource_id,自动从 datasource_manager 加载
+    3) 都没有就返回 [](下游会报 Schema 不能为空)
+    """
+    schema_dicts = convert_schema_to_dict(table_schema_param)
+    if schema_dicts:
+        return schema_dicts
+    if datasource_id_str:
+        ds_schema = datasource_manager.get_schema(datasource_id_str)
+        if ds_schema.get("success"):
+            return ds_schema.get("tables", []) or []
+    return []
+
+
 @router.post("/generate", response_model=Text2SQLResponse)
 async def generate_sql(request: Text2SQLRequest):
     try:
-        schema_dicts = convert_schema_to_dict(request.table_schema)
+        ds_id_str = str(request.datasource_id) if request.datasource_id else None
+        schema_dicts = _resolve_schema(request.table_schema, ds_id_str)
         result = text2sql_service.generate_sql(
             query=request.query,
             schema=schema_dicts,
             force_strategy=request.force_strategy,
-            datasource_id=str(request.datasource_id) if request.datasource_id else None
+            datasource_id=ds_id_str,
         )
         return Text2SQLResponse(**result)
     except Exception as e:
@@ -102,7 +122,8 @@ async def execute_sql(request: ExecuteSQLRequest):
             if not request.query:
                 raise HTTPException(status_code=400, detail="必须提供 query 或 sql 参数")
 
-            schema_dicts = convert_schema_to_dict(request.table_schema)
+            # schema 兜底解析:显式 schema 优先,否则从 datasource_id 自动加载
+            schema_dicts = _resolve_schema(request.table_schema, datasource_id_str)
 
             # Step 1a: 查询缓存（按 query + datasource + schema指纹 + force_strategy）
             cached = cache_service.get(
@@ -337,11 +358,33 @@ async def get_datasource_schema(datasource_id: str):
         raise HTTPException(status_code=500, detail=f"获取 Schema 失败: {str(e)}")
 
 
+# ============================================================
+# Manual-step Agent 工具白名单
+# ============================================================
+# LLM 在 /plan 拆解时为每步指定一个工具,前端按工具调用对应端点。
+# 用户手动点击每步执行(不自动连贯),状态完全可见、可控。
+# 工具集精简到 4 个,覆盖业务分析的核心动作:
+#   理解 schema → 写 SQL → 执行拿数据 → 业务解读
+ALLOWED_AGENT_TOOLS = {
+    "lookup_schema",     # 查 schema/表字段详情(用 datasource_id + table_name)
+    "generate_sql",      # 自然语言 → SQL(只生成不执行)
+    "execute_sql",       # 自然语言 → SQL → 执行(返回数据)
+    "interpret_results", # 数据 → 业务解读文字(基于上一步结果)
+}
+DEFAULT_AGENT_TOOL = "execute_sql"  # LLM 没标 tool 时的兜底
+
+
 @router.post("/plan")
 async def plan_analysis(request: dict):
     """
-    阶段二：分析需求拆解
-    将业务问题拆解为 2-4 个具体的数据查询步骤，帮助分析员系统地展开分析。
+    Manual-step Agent · 分析需求拆解
+    ----------------------------------------------------------------
+    把业务问题拆解为 2-4 个步骤,每步标注 tool(工具),前端按工具
+    调对应端点。设计上**不自动连贯执行** —— 用户手动点击每步执行,
+    每步结果可见可控。
+
+    这种"规划+人控"模式适合数据分析场景:分析师要在每一步审视
+    中间结果决定下一步,而不是一头扎进去等终局。
     """
     business_question = request.get("business_question", "").strip()
     datasource_id = request.get("datasource_id")
@@ -349,46 +392,109 @@ async def plan_analysis(request: dict):
     if not business_question:
         return {"success": False, "error": "请输入业务问题"}
 
-    # 获取数据表上下文
+    # 获取数据表上下文 —— 拿表名 + 字段名(给 lookup_schema 步骤参考)
     schema_context = ""
     if datasource_id:
         schema = datasource_manager.get_schema(str(datasource_id))
         if schema.get("success"):
-            table_names = [t["table_name"] for t in schema.get("tables", [])]
-            schema_context = f"\n可用数据表：{', '.join(table_names)}"
+            tables = schema.get("tables", [])
+            table_names = [t["table_name"] for t in tables]
+            schema_context = f"\n可用数据表:{', '.join(table_names)}"
 
-    prompt = f"""你是一位资深数据分析师。用户提出了一个业务分析问题，请将其拆解为2-4个具体的数据查询步骤，每步都能独立执行。
+    prompt = f"""你是一位资深数据分析师,正在帮用户用 Manual-step Agent 拆解业务问题。
 {schema_context}
 
-业务问题：{business_question}
+业务问题:{business_question}
 
-请严格按如下JSON格式输出，不要输出其他任何内容：
+把这个业务问题拆解为 2-4 个步骤,每步标注要调用的"工具"。可用的工具有 4 个:
+
+  1. lookup_schema     —— 查看某张表的字段详情(只读元信息,不查数据)
+                          适合:开始分析前先弄清楚表结构
+                          input 字段填:表名(从上面可用数据表列表里挑)
+
+  2. generate_sql      —— 把自然语言查询变成 SQL,但不执行
+                          适合:用户想先看 SQL 再决定要不要跑
+                          input 字段填:自然语言查询
+
+  3. execute_sql       —— 生成 SQL 并执行,返回数据
+                          适合:大多数"我想看数据"的步骤
+                          input 字段填:自然语言查询
+
+  4. interpret_results —— 把数据变成业务洞察文字
+                          适合:数据出来后想要一段业务总结
+                          input 字段填:自然语言查询(同上一步即可)
+
+请按如下 JSON 格式严格输出(只输出 JSON,不要解释、不要 markdown 包装):
+
 {{
-  "analysis_goal": "用一句话描述本次分析的核心目标",
+  "analysis_goal": "用一句话概括本次分析的核心目标",
   "steps": [
     {{
       "step": 1,
-      "description": "这一步要了解什么",
-      "query": "对应的自然语言查询（可直接用于SQL生成）",
-      "why": "为什么需要这一步"
+      "tool": "工具名(必须从上面 4 个里选一个)",
+      "description": "这一步要做什么(用户视角的简短描述,15 字内)",
+      "input": "工具的输入,见下面详细说明",
+      "why": "为什么需要这一步(给用户解释 1 句话)"
     }}
   ]
-}}"""
+}}
 
-    result = text2sql_service.llm.generate(prompt=prompt, temperature=0.2, max_tokens=1000)
+【input 字段填什么 —— 关键说明,必须严格遵守】
+- 若 tool="lookup_schema"     :input 填**表名**(单个英文表名,如 "Orders" / "Customers")
+- 若 tool="generate_sql"      :input 填**中文自然语言查询**(如"查询销售额最高的产品")
+- 若 tool="execute_sql"       :input 填**中文自然语言查询**(同上,**绝对不要写 SQL!**)
+- 若 tool="interpret_results" :input 填**中文自然语言查询**(同上)
+
+⚠️ 重点警告:input 字段**永远不要直接写 SQL 语句**!
+   即使 tool="execute_sql",你也只填中文问题描述,SQL 由系统自动生成。
+   反例(错误):"SELECT * FROM Orders LIMIT 10"
+   正例(正确):"查询前 10 条订单"
+
+【其他约束】
+- steps 数量 2-4 条,**不要超过 4 步**
+- 第一步通常是 lookup_schema(理解表结构)或 execute_sql(直接拿数据)
+- 中间步骤多用 execute_sql 拿数据
+- 最后一步用 interpret_results 给业务结论(可选)
+- tool 字段必须是 4 个工具名之一,**不能编造**
+"""
+
+    result = text2sql_service.llm.generate(prompt=prompt, temperature=0.2, max_tokens=1200)
     if not result.get("success"):
         return {"success": False, "error": result.get("error", "分析规划失败")}
 
+    raw = result.get("sql") or result.get("raw_response") or ""
     try:
-        raw = result.get("sql") or result.get("raw_response") or ""
         json_match = re.search(r'\{.*\}', raw, re.DOTALL)
-        if json_match:
-            plan = json.loads(json_match.group())
-            return {"success": True, **plan}
-    except Exception:
-        pass
+        if not json_match:
+            return {"success": False, "error": "规划结果解析失败,LLM 输出未含合法 JSON"}
+        plan = json.loads(json_match.group())
+    except Exception as e:
+        return {"success": False, "error": f"JSON 解析异常:{e}"}
 
-    return {"success": False, "error": "规划结果解析失败，请重试"}
+    # 校验 + 规整每个步骤
+    valid_steps = []
+    for i, step in enumerate(plan.get("steps", []), 1):
+        if not isinstance(step, dict):
+            continue
+        tool = str(step.get("tool", "")).strip().lower()
+        if tool not in ALLOWED_AGENT_TOOLS:
+            tool = DEFAULT_AGENT_TOOL  # 不合法的工具名 → 降级为 execute_sql
+        valid_steps.append({
+            "step":         step.get("step", i),
+            "tool":         tool,
+            "description":  str(step.get("description", "")).strip(),
+            "input":        str(step.get("input") or step.get("query") or "").strip(),
+            "why":          str(step.get("why", "")).strip(),
+        })
+
+    if not valid_steps:
+        return {"success": False, "error": "规划失败:LLM 没产出合法步骤"}
+
+    return {
+        "success": True,
+        "analysis_goal": str(plan.get("analysis_goal", "")).strip(),
+        "steps": valid_steps,
+    }
 
 
 def _detect_chart_type(intent: str, columns: list, data: list) -> str:

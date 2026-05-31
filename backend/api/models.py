@@ -55,10 +55,14 @@ class TokenStats(BaseModel):
 class Text2SQLRequest(BaseModel):
     """Text-to-SQL生成请求"""
     query: str = Field(..., description="自然语言查询", min_length=1)
-    table_schema: List[TableSchema] = Field(
-        ...,
+    table_schema: Optional[List[TableSchema]] = Field(
+        None,
         alias="schema",
-        description="数据库Schema"
+        description="数据库Schema(可选;如果提供 datasource_id,schema 可省略,后端会自动加载)"
+    )
+    datasource_id: Optional[str] = Field(
+        None,
+        description="数据源 ID(可选);若提供,可省略 schema(后端自动加载),同时启用字段注释注入"
     )
     force_strategy: Optional[str] = Field(
         None,

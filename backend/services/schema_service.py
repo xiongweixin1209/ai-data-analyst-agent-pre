@@ -24,6 +24,34 @@ class SchemaService:
         """
         self.datasource = datasource
         self.engine = self._create_engine()
+        # 列存在性缓存(防止重复 PRAGMA 查询,避免每张表都重复探测)
+        self._column_exists_cache: dict[str, bool] = {}
+
+    def _column_exists(self, table_or_view: str, column: str) -> bool:
+        """检查指定表/视图是否存在指定列。结果按 (table, column) 缓存,启动期一次性 probe。
+
+        用于 graceful 处理"可选元数据"场景:Northwind 等数据库有 table_metadata
+        表但缺 domain/layer 列;v_table_relationships 视图缺 related_table 列。
+        没有这个 helper 的话,每张表的每次查询都会失败 + 打印一行错误,
+        启动期可能产生几十行无效日志。
+        """
+        cache_key = f"{table_or_view}.{column}"
+        if cache_key in self._column_exists_cache:
+            return self._column_exists_cache[cache_key]
+
+        exists = False
+        try:
+            with self.engine.connect() as conn:
+                if self.datasource.type == "sqlite":
+                    cols = conn.execute(text(f'PRAGMA table_info("{table_or_view}")')).fetchall()
+                    col_names = {row[1] for row in cols}
+                    exists = column in col_names
+                # MySQL / PostgreSQL 没实现 — 真要用再补,目前 TTS 路径全是 SQLite
+        except Exception:
+            exists = False
+
+        self._column_exists_cache[cache_key] = exists
+        return exists
 
     def _create_engine(self):
         """根据数据源类型创建SQLAlchemy引擎"""
@@ -213,9 +241,9 @@ class SchemaService:
             "DWS" - 汇总层
             "UNKNOWN" - 未知
         """
-        # 方法1：检查是否有table_metadata表
+        # 方法1:从 table_metadata.layer 读(若表/列都存在)
         tables = self.get_tables()
-        if "table_metadata" in tables:
+        if "table_metadata" in tables and self._column_exists("table_metadata", "layer"):
             try:
                 with self.engine.connect() as connection:
                     query = text(
@@ -252,9 +280,9 @@ class SchemaService:
         Returns:
             业务域名称，如 "订单域"、"客户域" 等
         """
-        # 方法1：从table_metadata表读取
+        # 方法1:从 table_metadata.domain 读(若表/列都存在)
         tables = self.get_tables()
-        if "table_metadata" in tables:
+        if "table_metadata" in tables and self._column_exists("table_metadata", "domain"):
             try:
                 with self.engine.connect() as connection:
                     query = text(
@@ -343,12 +371,12 @@ class SchemaService:
         except Exception as e:
             print(f"获取视图列表失败: {e}")
 
-        if "v_table_relationships" in views:
+        if "v_table_relationships" in views and self._column_exists("v_table_relationships", "related_table"):
             try:
                 with self.engine.connect() as connection:
                     query = text("""
-                        SELECT related_table 
-                        FROM v_table_relationships 
+                        SELECT related_table
+                        FROM v_table_relationships
                         WHERE table_name = :table_name
                     """)
                     result = connection.execute(query, {"table_name": table_name}).fetchall()

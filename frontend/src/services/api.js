@@ -38,12 +38,15 @@ apiClient.interceptors.response.use(
 export const text2sqlAPI = {
   // ... 原有代码保持不变 ...
 
-  generate: async (query, schema, forceStrategy = null) => {
-    const response = await apiClient.post('/text2sql/generate', {
-      query,
-      table_schema: schema,
-      force_strategy: forceStrategy,
-    });
+  generate: async (query, schema, forceStrategy = null, datasourceId = null) => {
+    const body = { query, force_strategy: forceStrategy };
+    // 只在 schema 非空时传(避免后端 "Schema 不能为空")
+    // 若 datasourceId 给了,后端会自动从数据源加载 schema
+    if (schema && Array.isArray(schema) && schema.length > 0) {
+      body.table_schema = schema;
+    }
+    if (datasourceId) body.datasource_id = String(datasourceId);
+    const response = await apiClient.post('/text2sql/generate', body);
     return response.data;
   },
 
@@ -62,7 +65,10 @@ export const text2sqlAPI = {
 
     if (query) requestData.query = query;
     if (sql) requestData.sql = sql;
-    if (schema) requestData.table_schema = schema;
+    // 只在 schema 是非空数组时才传(空数组 [] 在 JS 里 truthy,会误发)
+    if (schema && Array.isArray(schema) && schema.length > 0) {
+      requestData.table_schema = schema;
+    }
     if (datasourceId) requestData.datasource_id = String(datasourceId);
 
     const response = await apiClient.post('/text2sql/execute', requestData);
